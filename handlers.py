@@ -11,7 +11,7 @@ from config import TOKEN
 
 import os
 from api import get_euro_to_toman_exchange_rate
-from controller import buy_euro_control, other_order_control, app_fee_control
+from controller import buy_euro_control, other_order_control, app_fee_control, tuition_fee_control
 import time
 
 class States(Enum):
@@ -407,7 +407,7 @@ async def italy_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return await italy_app_fee(update, context)
 
     elif text == "شهریه دانشگاه":
-        context.user_data["is_app_fee"] = True
+        context.user_data["is_app_fee"] = False
         # می‌خواهیم از همین منطق اپ فی استفاده کنیم
         return await italy_app_fee(update, context)
 
@@ -958,6 +958,8 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
 
         if context.user_data["is_app_fee"]:
             app_fee_control(update, context)
+        else:
+            tuition_fee_control(update, context)
 
 
         # در صورت دریافت عکس

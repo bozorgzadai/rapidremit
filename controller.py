@@ -48,6 +48,14 @@ def insert_app_fee(tel_userId, university='', degree='', euroAmount='', euroPric
     db.execute(insert_query, insert_params)
 
 
+def insert_tuition_fee(tel_userId, university='', degree='', euroAmount='', euroPrice='', rialChange='', trans_filepath='', finish=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO tuition_fee(tel_userId, university, degree, euroAmount, euroPrice, rial_change, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
+    db.execute(insert_query, insert_params)
+
+
 
 def insert_or_update_user(update, context):
     user = get_user_by_id(context._user_id)
@@ -75,5 +83,11 @@ def other_order_control(update, context):
 def app_fee_control(update, context):
     insert_or_update_user(update, context)
     insert_app_fee(context._user_id, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
+                   euroAmount=context.user_data["app_fee_euro_amount"], euroPrice=context.user_data["app_fee_euro_price"],
+                   rialChange=context.user_data["app_fee_rial"], trans_filepath=context.user_data["app_fee_trans_filepath"], finish=0)
+    
+def tuition_fee_control(update, context):
+    insert_or_update_user(update, context)
+    insert_tuition_fee(context._user_id, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
                    euroAmount=context.user_data["app_fee_euro_amount"], euroPrice=context.user_data["app_fee_euro_price"],
                    rialChange=context.user_data["app_fee_rial"], trans_filepath=context.user_data["app_fee_trans_filepath"], finish=0)
