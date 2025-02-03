@@ -9,7 +9,10 @@ from telegram.ext import (
 )
 from config import TOKEN
 
-from controller import buy_euro_control, other_order_control
+import os
+from api import get_euro_to_toman_exchange_rate
+from controller import buy_euro_control, other_order_control, app_fee_control
+import time
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -399,10 +402,12 @@ async def italy_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return await italy_cimea_payment(update, context)
 
     elif text == "اپ فی":
+        context.user_data["is_app_fee"] = True
         # وقتی کاربر اپ فی را می‌زند، وارد مرحله نخست اپ فی شویم
         return await italy_app_fee(update, context)
 
     elif text == "شهریه دانشگاه":
+        context.user_data["is_app_fee"] = True
         # می‌خواهیم از همین منطق اپ فی استفاده کنیم
         return await italy_app_fee(update, context)
 
@@ -805,7 +810,7 @@ async def italy_app_fee_tgid(update: Update, context: ContextTypes.DEFAULT_TYPE)
         )
         return States.ITALY_APP_FEE_DEGREE
 
-    context.user_data["app_fee_tgid"] = text
+    context.user_data["id"] = text
 
     await update.message.reply_text(
         "کاربر گرامی لطفا شماره تماس خود را جهت پیگیری‌های آتی وارد نمایید:",
@@ -827,7 +832,7 @@ async def italy_app_fee_contact(update: Update, context: ContextTypes.DEFAULT_TY
         )
         return States.ITALY_APP_FEE_TGID
 
-    context.user_data["app_fee_contact"] = text
+    context.user_data["contact"] = text
 
     await update.message.reply_text(
         "لطفا مبلغ دقیق اپلیکشن فی کورس درخواستی خود را به یورو وارد کنید:",
@@ -854,9 +859,11 @@ async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYP
         if amount_eur <= 0:
             raise ValueError
 
-        context.user_data["app_fee_eur"] = amount_eur
+        context.user_data["app_fee_euro_amount"] = amount_eur
+        euro_price, unit = await get_euro_to_toman_exchange_rate()
+        context.user_data["app_fee_euro_price"] = euro_price
         # محاسبه ریالی با نرخ ثابت 87000
-        amount_rial = int(amount_eur * 87000)
+        amount_rial = int(amount_eur * euro_price * 10)
         context.user_data["app_fee_rial"] = amount_rial
 
         await update.message.reply_text(
@@ -929,24 +936,36 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
         return States.ITALY_APP_FEE_CONFIRM
 
     if update.message.photo:
+        # Get the largest version of the photo (last item in the list)
+        photo_file = await update.message.photo[-1].get_file()
+
+        save_directory = "app_and_tuition_fee"
+        os.makedirs(save_directory, exist_ok=True)
+
+        # Generate a unique file name using timestamp and user ID
+        user_id = context._user_id  # Get the Telegram user ID
+        # user_id = update.message.from_user.id  # Get the Telegram user ID
+        timestamp = int(time.time() * 1000)  # Current time in milliseconds
+        unique_filename = f"{user_id}_{timestamp}.jpg"
+
+        # Define the path where you want to save the photo
+        file_path = os.path.join(save_directory, unique_filename)
+
+        # Download and save the photo
+        await photo_file.download_to_drive(custom_path=file_path)
+        context.user_data["app_fee_trans_filepath"] = file_path
+
+
+        if context.user_data["is_app_fee"]:
+            app_fee_control(update, context)
+
+
         # در صورت دریافت عکس
         await update.message.reply_text(
             "کاربر گرامی، درخواست شما با موفقیت ثبت شد. "
             "ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت.",
             reply_markup=main_menu_keyboard()
         )
-        # در اینجا می‌توانید اطلاعات کاربر را برای ادمین ارسال یا در دیتابیس ذخیره کنید
-        # مثلاً:
-        # university = context.user_data.get("app_fee_university")
-        # degree = context.user_data.get("app_fee_degree")
-        # ...
-        # پاک‌سازی داده‌ها در صورت نیاز
-        context.user_data.pop("app_fee_university", None)
-        context.user_data.pop("app_fee_degree", None)
-        context.user_data.pop("app_fee_tgid", None)
-        context.user_data.pop("app_fee_contact", None)
-        context.user_data.pop("app_fee_eur", None)
-        context.user_data.pop("app_fee_rial", None)
 
         return States.MAIN_MENU
     else:
