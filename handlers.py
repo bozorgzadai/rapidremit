@@ -13,6 +13,7 @@ import os
 from api import get_euro_to_toman_exchange_rate
 from controller import buy_euro_control, other_order_control, app_fee_control, tuition_fee_control
 import time
+from create_btn import btn_reg_type, btn_reg_course_level
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -1184,14 +1185,12 @@ async def italy_register_university_name(update: Update, context: ContextTypes.D
         return await italy_register_university(update, context)
     
     context.user_data["university_name"] = update.message.text
+
     # نمایش گزینه‌های نوع درخواست
     await update.message.reply_text(
         "لطفا نوع درخواست خود را مشخص کنید:",
         reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("apply (پیش از پذیرش)"), KeyboardButton("Enrollment (پس از قبولی)")],
-                [KeyboardButton("بازگشت")]
-            ],
+            btn_reg_type(),
             resize_keyboard=True,
         )
     )
@@ -1220,10 +1219,7 @@ async def italy_register_university_course(update: Update, context: ContextTypes
         await update.message.reply_text(
             "لطفا نوع درخواست خود را مشخص کنید:",
             reply_markup=ReplyKeyboardMarkup(
-                [
-                    [KeyboardButton("apply (پیش از پذیرش)"), KeyboardButton("Enrollment (پس از قبولی)")],
-                    [KeyboardButton("بازگشت")]
-                ],
+                btn_reg_type(),
                 resize_keyboard=True,
             )
         )
@@ -1233,12 +1229,7 @@ async def italy_register_university_course(update: Update, context: ContextTypes
     await update.message.reply_text(
         "لطفا مقطع کورس خود را انتخاب کنید:",
         reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("لیسانس"), KeyboardButton("کارشناسی ارشد")],
-                [KeyboardButton("single cycle"), KeyboardButton("سینگل کورس")],
-                [KeyboardButton("other")],
-                [KeyboardButton("بازگشت")]
-            ],
+            btn_reg_course_level(),
             resize_keyboard=True,
         )
     )
@@ -1273,12 +1264,7 @@ async def italy_register_university_language(update: Update, context: ContextTyp
         await update.message.reply_text(
             "لطفا مقطع کورس خود را انتخاب کنید:",
             reply_markup=ReplyKeyboardMarkup(
-                [
-                    [KeyboardButton("لیسانس"), KeyboardButton("کارشناسی ارشد")],
-                    [KeyboardButton("single cycle"), KeyboardButton("سینگل کورس")],
-                    [KeyboardButton("other")],
-                    [KeyboardButton("بازگشت")]
-                ],
+                btn_reg_course_level(),
                 resize_keyboard=True,
             )
         )
