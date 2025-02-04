@@ -13,7 +13,7 @@ import os
 from api import get_euro_to_toman_exchange_rate
 from controller import buy_euro_control, other_order_control, app_fee_control, tuition_fee_control
 import time
-from create_btn import btn_reg_type, btn_reg_course_level
+from create_btn import btn_reg_type, btn_reg_course_level, btn_reg_course_lang
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -1248,11 +1248,7 @@ async def italy_register_university_degree(update: Update, context: ContextTypes
     await update.message.reply_text(
         "لطفا زبان کورس خود را انتخاب کنید:",
         reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("ترکیبی"), KeyboardButton("Italian")],
-                [KeyboardButton("English")],
-                [KeyboardButton("بازگشت")]
-            ],
+            btn_reg_course_lang(),
             resize_keyboard=True,
         )
     )
@@ -1283,11 +1279,7 @@ async def italy_register_university_tgid(update: Update, context: ContextTypes.D
         await update.message.reply_text(
             "لطفا زبان کورس خود را انتخاب کنید:",
             reply_markup=ReplyKeyboardMarkup(
-                [
-                    [KeyboardButton("ترکیبی"), KeyboardButton("Italian")],
-                    [KeyboardButton("English")],
-                    [KeyboardButton("بازگشت")]
-                ],
+                btn_reg_course_lang(),
                 resize_keyboard=True,
             )
         )

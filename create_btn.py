@@ -1,4 +1,4 @@
-from model import get_reg_type, get_reg_course_level
+from model import get_reg_type, get_reg_course_level, get_reg_course_lang
 from telegram import KeyboardButton
 max_col = 2
 
@@ -25,4 +25,9 @@ def btn_reg_type():
 
 def btn_reg_course_level():
     result = get_reg_course_level()
+    return create_btns(result)
+
+
+def btn_reg_course_lang():
+    result = get_reg_course_lang()
     return create_btns(result)

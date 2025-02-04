@@ -11,3 +11,9 @@ def get_reg_course_level():
     db = Database.get_database()
     select_query = "SELECT * FROM reg_course_level"
     return  db.select(select_query)
+
+
+def get_reg_course_lang():
+    db = Database.get_database()
+    select_query = "SELECT * FROM reg_course_lang"
+    return  db.select(select_query)
