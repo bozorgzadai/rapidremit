@@ -11,7 +11,9 @@ from config import TOKEN
 
 import os
 from api import get_euro_to_toman_exchange_rate
-from controller import buy_euro_control, other_order_control, app_fee_control, tuition_fee_control
+from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
+                        get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
+                        reg_uni_control,)
 import time
 from create_btn import btn_reg_type, btn_reg_course_level, btn_reg_course_lang
 
@@ -677,7 +679,7 @@ async def handle_telegram_id(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return States.ITALY_RESERVE_EXAM_DATE
 
 
-    context.user_data["tg_id"] = update.message.text
+    context.user_data["id"] = update.message.text
     await update.message.reply_text(
         "لطفا شماره تلفن خود را وارد نمایید",
         reply_markup=back_button_keyboard()
@@ -1128,7 +1130,7 @@ async def italy_cimea_receive_tg_id(update: Update, context: ContextTypes.DEFAUL
         return await italy_cimea_speed(update, context)
 
     # ذخیره آیدی تلگرام
-    context.user_data["tg_id"] = text
+    context.user_data["id"] = text
 
     # درخواست شماره تماس از کاربر
     await update.message.reply_text(
@@ -1205,7 +1207,7 @@ async def italy_register_university_type(update: Update, context: ContextTypes.D
         )
         return States.ITALY_REGISTER_UNIVERSITY_NAME
 
-    context.user_data["university_type"] = update.message.text
+    context.user_data["university_type"] = get_id_by_regTypeName_control(update.message.text)
     # درخواست نام کورس
     await update.message.reply_text(
         "لطفا نام کورس را انتخاب کنید:",
@@ -1243,7 +1245,7 @@ async def italy_register_university_degree(update: Update, context: ContextTypes
             reply_markup=back_button_keyboard()
         )
         return States.ITALY_REGISTER_UNIVERSITY_COURSE
-    context.user_data["degree"] = update.message.text
+    context.user_data["course_level"] = get_id_by_regCourseLevelName_control(update.message.text)
     # درخواست زبان کورس
     await update.message.reply_text(
         "لطفا زبان کورس خود را انتخاب کنید:",
@@ -1265,7 +1267,7 @@ async def italy_register_university_language(update: Update, context: ContextTyp
             )
         )
         return States.ITALY_REGISTER_UNIVERSITY_DEGREE
-    context.user_data["language"] = update.message.text
+    context.user_data["course_lang"] = get_id_by_regCourseLangName_control(update.message.text)
     # درخواست آیدی تلگرام از کاربر
     await update.message.reply_text(
         "لطفا آیدی تلگرامی خود را وارد نمایید:",
@@ -1284,7 +1286,7 @@ async def italy_register_university_tgid(update: Update, context: ContextTypes.D
             )
         )
         return States.ITALY_REGISTER_UNIVERSITY_LANGUAGE
-    context.user_data["tg_id"] = update.message.text
+    context.user_data["id"] = update.message.text
     # درخواست شماره تماس از کاربر
     await update.message.reply_text(
         "لطفا شماره تماس خود را وارد کنید:",
@@ -1302,6 +1304,9 @@ async def italy_register_university_contact(update: Update, context: ContextType
         return States.ITALY_REGISTER_UNIVERSITY_TGID
 
     context.user_data["contact"] = update.message.text
+
+    reg_uni_control(update, context)
+
     # نمایش پیام نهایی و بازگشت به منوی اصلی
     await update.message.reply_text(
         "ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت.",
@@ -1339,7 +1344,7 @@ async def italy_reserve_hotel_tgid(update: Update, context: ContextTypes.DEFAULT
     if update.message.text == "بازگشت":
         return await italy_reserve_hotel(update, context)
 
-    context.user_data["tg_id"] = update.message.text
+    context.user_data["id"] = update.message.text
     # درخواست شماره تماس از کاربر
     await update.message.reply_text(
         "کاربر گرامی لطفا شماره تماس خود را جهت پیگیری های آتی برای سفارش خود وارد کنید:",
