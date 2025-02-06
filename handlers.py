@@ -91,6 +91,7 @@ class States(Enum):
     GET_ID = auto()
     GET_PHONE = auto()
     CONFIRM_PAYMENT = auto()
+    PAYMENT = auto()
 
 
 def main_menu_keyboard() -> ReplyKeyboardMarkup:
@@ -804,7 +805,7 @@ async def confirm_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     elif text == "پرداخت":
         return await goto_payment(update)
     elif text == "انصراف":
-        return await goto_main_menu(update, message)
+        return await goto_main_menu(update)
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_confirm_payment(update, message)

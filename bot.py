@@ -81,8 +81,7 @@ from handlers import (
     get_id,
     get_phone,
     confirm_payment,
-
-
+    payment,
 )
 
 def main():
@@ -146,6 +145,10 @@ def main():
             ],
             States.CONFIRM_PAYMENT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, confirm_payment)
+            ],
+            States.PAYMENT: [
+                MessageHandler(filters.PHOTO & ~filters.COMMAND, payment),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, payment)
             ],
 
 
