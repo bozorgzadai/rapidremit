@@ -71,7 +71,18 @@ from handlers import (
     italy_cimea_receive_tg_id,
     italy_cimea_receive_phone,
     cisia_account_yes_pass2,
-    cisia_account_yes_pass
+    cisia_account_yes_pass,
+
+
+    mine_menu,
+    get_cisia_username,
+    get_cisia_pass,
+    get_exam_date,
+    get_id,
+    get_phone,
+    confirm_payment,
+
+
 )
 
 def main():
@@ -109,6 +120,40 @@ def main():
             States.OTHERS_ID: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, others_id)
             ],
+
+
+
+
+
+
+            States.MINE_MENU: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, mine_menu)
+            ],
+            States.GET_CISIA_USERNAME: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_cisia_username)
+            ],
+            States.GET_CISIA_PASS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_cisia_pass)
+            ],
+            States.GET_EXAM_DATE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_exam_date)
+            ],
+            States.GET_ID: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_id)
+            ],
+            States.GET_PHONE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_phone)
+            ],
+            States.CONFIRM_PAYMENT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, confirm_payment)
+            ],
+
+
+
+
+
+
+
             # منوی Italy
             States.ITALY_MAIN_MENU: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_main_menu)
