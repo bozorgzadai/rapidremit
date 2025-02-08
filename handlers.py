@@ -15,7 +15,7 @@ from controller import (buy_euro_control, other_order_control, app_fee_control, 
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
                         reg_uni_control,)
 import time
-from create_btn import btn_reg_type, btn_reg_course_level, btn_reg_course_lang
+from create_btn import reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -1438,7 +1438,7 @@ async def italy_register_university_name(update: Update, context: ContextTypes.D
     await update.message.reply_text(
         "لطفا نوع درخواست خود را مشخص کنید:",
         reply_markup=ReplyKeyboardMarkup(
-            btn_reg_type(),
+            reply_keyboard_reg_type(),
             resize_keyboard=True,
         )
     )
@@ -1466,20 +1466,14 @@ async def italy_register_university_course(update: Update, context: ContextTypes
     if update.message.text == "بازگشت":
         await update.message.reply_text(
             "لطفا نوع درخواست خود را مشخص کنید:",
-            reply_markup=ReplyKeyboardMarkup(
-                btn_reg_type(),
-                resize_keyboard=True,
-            )
+            reply_markup=reply_keyboard_reg_type()
         )
         return States.ITALY_REGISTER_UNIVERSITY_TYPE
     context.user_data["course_name"] = update.message.text
     # درخواست مقطع کورس
     await update.message.reply_text(
         "لطفا مقطع کورس خود را انتخاب کنید:",
-        reply_markup=ReplyKeyboardMarkup(
-            btn_reg_course_level(),
-            resize_keyboard=True,
-        )
+        reply_markup=reply_keyboard_reg_course_level()
     )
     return States.ITALY_REGISTER_UNIVERSITY_DEGREE
 
@@ -1495,10 +1489,7 @@ async def italy_register_university_degree(update: Update, context: ContextTypes
     # درخواست زبان کورس
     await update.message.reply_text(
         "لطفا زبان کورس خود را انتخاب کنید:",
-        reply_markup=ReplyKeyboardMarkup(
-            btn_reg_course_lang(),
-            resize_keyboard=True,
-        )
+        reply_markup=reply_keyboard_reg_course_lang()
     )
     return States.ITALY_REGISTER_UNIVERSITY_LANGUAGE
 
@@ -1508,7 +1499,7 @@ async def italy_register_university_language(update: Update, context: ContextTyp
         await update.message.reply_text(
             "لطفا مقطع کورس خود را انتخاب کنید:",
             reply_markup=ReplyKeyboardMarkup(
-                btn_reg_course_level(),
+                reply_keyboard_reg_course_level(),
                 resize_keyboard=True,
             )
         )
@@ -1527,7 +1518,7 @@ async def italy_register_university_tgid(update: Update, context: ContextTypes.D
         await update.message.reply_text(
             "لطفا زبان کورس خود را انتخاب کنید:",
             reply_markup=ReplyKeyboardMarkup(
-                btn_reg_course_lang(),
+                reply_keyboard_reg_course_lang(),
                 resize_keyboard=True,
             )
         )

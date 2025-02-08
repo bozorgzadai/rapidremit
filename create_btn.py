@@ -1,5 +1,5 @@
 from model import get_reg_type, get_reg_course_level, get_reg_course_lang
-from telegram import KeyboardButton
+from telegram import KeyboardButton, ReplyKeyboardMarkup
 max_col = 2
 
 def create_btns(result):
@@ -15,19 +15,23 @@ def create_btns(result):
             temp_group = []
     
     btns.append([KeyboardButton("بازگشت")])
-    return btns
+
+    return ReplyKeyboardMarkup(
+                btns,
+                resize_keyboard=True,
+            )
 
 
-def btn_reg_type():
+def reply_keyboard_reg_type():
     result = get_reg_type()
     return create_btns(result)
     
 
-def btn_reg_course_level():
+def reply_keyboard_reg_course_level():
     result = get_reg_course_level()
     return create_btns(result)
 
 
-def btn_reg_course_lang():
+def reply_keyboard_reg_course_lang():
     result = get_reg_course_lang()
     return create_btns(result)
