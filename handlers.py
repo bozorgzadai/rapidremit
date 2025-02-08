@@ -15,7 +15,7 @@ from controller import (buy_euro_control, other_order_control, app_fee_control, 
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
                         reg_uni_control,)
 import time
-from create_btn import reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang
+from create_btn import reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang, reply_keyboard_tolc_exam_type
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -153,29 +153,29 @@ def reserve_exam_keyboard() -> ReplyKeyboardMarkup:
         resize_keyboard=True,
     )
 
-def tolc_submenu_keyboard() -> ReplyKeyboardMarkup:
-    tolc_i_btn = KeyboardButton("TOLC-I")
-    tolc_f_btn = KeyboardButton("TOLC-F")
-    tolc_e_btn = KeyboardButton("TOLC-E")
-    tolc_s_btn = KeyboardButton("TOLC-S")
-    tolc_su_btn = KeyboardButton("TOLC-SU")
-    tolc_b_btn = KeyboardButton("TOLC-B")
-    tolc_av_btn = KeyboardButton("TOLC-AV")
-    tolc_psi_btn = KeyboardButton("TOLC-PSi")
-    tolc_sb_btn = KeyboardButton("TOLC-SB")
-    tolc_lp_btn = KeyboardButton("TOLC-LP")
-    back_btn = KeyboardButton("بازگشت")
-    return ReplyKeyboardMarkup(
-        [
-            [tolc_i_btn, tolc_f_btn],
-            [tolc_e_btn, tolc_s_btn],
-            [tolc_su_btn, tolc_b_btn],
-            [tolc_av_btn, tolc_psi_btn],
-            [tolc_sb_btn, tolc_lp_btn],
-            [back_btn],
-        ],
-        resize_keyboard=True,
-    )
+# def reply_keyboard_tolc_exam_type() -> ReplyKeyboardMarkup:
+#     tolc_i_btn = KeyboardButton("TOLC-I")
+#     tolc_f_btn = KeyboardButton("TOLC-F")
+#     tolc_e_btn = KeyboardButton("TOLC-E")
+#     tolc_s_btn = KeyboardButton("TOLC-S")
+#     tolc_su_btn = KeyboardButton("TOLC-SU")
+#     tolc_b_btn = KeyboardButton("TOLC-B")
+#     tolc_av_btn = KeyboardButton("TOLC-AV")
+#     tolc_psi_btn = KeyboardButton("TOLC-PSi")
+#     tolc_sb_btn = KeyboardButton("TOLC-SB")
+#     tolc_lp_btn = KeyboardButton("TOLC-LP")
+#     back_btn = KeyboardButton("بازگشت")
+#     return ReplyKeyboardMarkup(
+#         [
+#             [tolc_i_btn, tolc_f_btn],
+#             [tolc_e_btn, tolc_s_btn],
+#             [tolc_su_btn, tolc_b_btn],
+#             [tolc_av_btn, tolc_psi_btn],
+#             [tolc_sb_btn, tolc_lp_btn],
+#             [back_btn],
+#         ],
+#         resize_keyboard=True,
+#     )
 
 def tolc_x_keyboard(x_suffix: str) -> ReplyKeyboardMarkup:
     english_btn = KeyboardButton(f"ENGLISH TOLC-{x_suffix}")
@@ -449,7 +449,7 @@ async def italy_reserve_exam(update: Update, context: ContextTypes.DEFAULT_TYPE)
     elif text == "TOLC":
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
     elif text == "داروسازی تورورگاتا":
@@ -591,7 +591,7 @@ async def italy_reserve_exam_tolc(update: Update, context: ContextTypes.DEFAULT_
     else:
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
 
@@ -603,7 +603,7 @@ async def handle_iolc_x_selection(update: Update, context: ContextTypes.DEFAULT_
     if text == "بازگشت":
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
     
@@ -846,7 +846,7 @@ async def cisia_account_yes(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if text == "بازگشت":
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
     
@@ -863,7 +863,7 @@ async def cisia_account_yes_pass(update: Update, context: ContextTypes.DEFAULT_T
     if text == "بازگشت":
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
     
@@ -888,7 +888,7 @@ async def handle_cisia_account_no(update: Update, context: ContextTypes.DEFAULT_
     if text == "بازگشت":
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
 
@@ -904,7 +904,7 @@ async def handle_exam_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if text == "بازگشت":
         await update.message.reply_text(
             "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tolc_submenu_keyboard()
+            reply_markup=reply_keyboard_tolc_exam_type()
         )
         return States.ITALY_RESERVE_EXAM_TOLC
 

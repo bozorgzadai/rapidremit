@@ -17,6 +17,11 @@ def get_reg_course_lang():
     select_query = "SELECT * FROM reg_course_lang"
     return  db.select(select_query)
 
+def get_tolc_exam_type():
+    db = Database.get_database()
+    select_query = "SELECT * FROM tolc_exam_type"
+    return  db.select(select_query)
+
 
 
 def get_user_by_id(user_id):

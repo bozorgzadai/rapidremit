@@ -1,4 +1,4 @@
-from model import get_reg_type, get_reg_course_level, get_reg_course_lang
+from model import get_reg_type, get_reg_course_level, get_reg_course_lang, get_tolc_exam_type
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 max_col = 2
 
@@ -34,4 +34,9 @@ def reply_keyboard_reg_course_level():
 
 def reply_keyboard_reg_course_lang():
     result = get_reg_course_lang()
+    return create_btns(result)
+
+
+def reply_keyboard_tolc_exam_type():
+    result = get_tolc_exam_type()
     return create_btns(result)
