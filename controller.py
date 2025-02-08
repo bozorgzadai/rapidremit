@@ -1,6 +1,6 @@
 from model import (get_user_by_id, insert_user, update_user, insert_buy_currency, insert_other_order,
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
-                   insert_reg_uni, get_id_by_tolcExamTypeName)
+                   insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName)
 
 
 def get_id_by_regTypeName_control(regTypeName):
@@ -20,6 +20,11 @@ def get_id_by_regCourseLangName_control(regCourseLangName):
 
 def get_id_by_tolcExamTypeName_control(tolcExamTypeName):
     result = get_id_by_tolcExamTypeName(tolcExamTypeName)
+    key = list(result[0].keys())[0]
+    return result[0][key]
+
+def get_id_by_tolcExamDetailName_control(tolcExamDetailName):
+    result = get_id_by_tolcExamDetailName(tolcExamDetailName)
     key = list(result[0].keys())[0]
     return result[0][key]
 

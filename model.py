@@ -54,6 +54,12 @@ def get_id_by_tolcExamTypeName(tolcExamTypeName):
     select_params = (tolcExamTypeName,)
     return db.select(select_query, select_params)
 
+def get_id_by_tolcExamDetailName(tolcExamDetailName):
+    db = Database.get_database()
+    select_query = "SELECT * FROM tolc_exam_detail WHERE tolcExamDetailName = %s"
+    select_params = (tolcExamDetailName,)
+    return db.select(select_query, select_params)
+
 def get_tolcExamDetailName_by_tolcExamTypeId(tolcExamTypeId):
     db = Database.get_database()
     select_query = "SELECT * FROM tolc_exam_detail WHERE tolcExamTypeId = %s"

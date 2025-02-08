@@ -13,7 +13,7 @@ import os
 from api import get_euro_to_toman_exchange_rate
 from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
-                        reg_uni_control, get_id_by_tolcExamTypeName_control)
+                        reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control)
 import time
 from create_btn import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
                         reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail)
@@ -93,6 +93,27 @@ class States(Enum):
     GET_PHONE = auto()
     CONFIRM_PAYMENT = auto()
     PAYMENT = auto()
+
+
+async def save_transaction_photo(update, context, save_directory):
+    # Get the largest version of the photo (last item in the list)
+    photo_file = await update.message.photo[-1].get_file()
+
+    os.makedirs(save_directory, exist_ok=True)
+
+    # Generate a unique file name using timestamp and user ID
+    user_id = context._user_id  # Get the Telegram user ID
+    # user_id = update.message.from_user.id  # Get the Telegram user ID
+    timestamp = int(time.time() * 1000)  # Current time in milliseconds
+    unique_filename = f"{user_id}_{timestamp}.jpg"
+
+    # Define the path where you want to save the photo
+    file_path = os.path.join(save_directory, unique_filename)
+
+    # Download and save the photo
+    await photo_file.download_to_drive(custom_path=file_path)
+
+    return file_path
 
 
 def main_menu_keyboard() -> ReplyKeyboardMarkup:
@@ -579,9 +600,7 @@ async def italy_reserve_exam_tolc(update: Update, context: ContextTypes.DEFAULT_
         )
         return States.ITALY_RESERVE_EXAM
     if text.startswith("TOLC-"):
-        x_suffix = text.split("-")[1]
-        context.user_data["current_x_full"] = text
-        context.user_data["current_x_suffix"] = x_suffix
+        context.user_data["tolcExamTypeName"] = text
         context.user_data["tolcExamTypeId"] = get_id_by_tolcExamTypeName_control(text)
 
         message = f"لطفاً {text} را انتخاب کنید:"
@@ -611,6 +630,7 @@ async def handle_iolc_x_selection(update: Update, context: ContextTypes.DEFAULT_
         return States.ITALY_RESERVE_EXAM_TOLC
     
     if text.startswith("ENGLISH TOLC-") or text.startswith("TOLC-"):
+        context.user_data["tolcExamDetailId"] = get_id_by_tolcExamDetailName_control(text)
         return await goto_mine_menu(update)
         # نمایش سوال مربوط به داشتن اکانت در سایت CISIA
         # await update.message.reply_text(
@@ -648,7 +668,6 @@ async def goto_main_menu(update, message):
 
 
 async def goto_mine_menu(update, message="آیا داخل سایت cisia دارای اکانت هستید؟"):
-    # نمایش سوال مربوط به داشتن اکانت در سایت CISIA
     await update.message.reply_text(
         message,
         reply_markup=ReplyKeyboardMarkup(
@@ -665,7 +684,7 @@ async def goto_mine_menu(update, message="آیا داخل سایت cisia دار�
 async def mine_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        x_full = context.user_data.get("current_x_full", "8")
+        x_full = context.user_data.get("tolcExamTypeName", "8")
         message = f"لطفاً {x_full} را انتخاب کنید:"
         return await goto_italy_reserve_exam_tolc_x(update, context, message)
         # await update.message.reply_text(
@@ -700,7 +719,7 @@ async def get_cisia_username(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if text == "بازگشت":
         return await goto_mine_menu(update)
 
-    context.user_data["cisia_username"] = update.message.text
+    context.user_data["cisia_account_username"] = update.message.text
     return await goto_get_cisia_pass(update)
 
 
@@ -717,7 +736,7 @@ async def get_cisia_pass(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if text == "بازگشت":
         return await goto_get_cisia_username(update)
 
-    context.user_data["cisia_pass"] = update.message.text
+    context.user_data["cisia_account_password"] = update.message.text
     return await goto_get_exam_date(update)
 
 
@@ -737,7 +756,7 @@ async def get_exam_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         else:
             return await goto_mine_menu(update)
 
-    context.user_data["exam_date"] = update.message.text
+    context.user_data["told_exam_date"] = update.message.text
     return await goto_get_id(update)
 
 
@@ -830,6 +849,10 @@ async def goto_payment(update, message=None):
 
 async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
+        save_directory = "tolc_exam"
+        file_path = await save_transaction_photo(update, context, save_directory)
+        context.user_data["tolc_exam_trans_filepath"] = file_path
+
         message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
         return await goto_main_menu(update, message)
     else:
@@ -1186,23 +1209,8 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
         return States.ITALY_APP_FEE_CONFIRM
 
     if update.message.photo:
-        # Get the largest version of the photo (last item in the list)
-        photo_file = await update.message.photo[-1].get_file()
-
         save_directory = "app_and_tuition_fee"
-        os.makedirs(save_directory, exist_ok=True)
-
-        # Generate a unique file name using timestamp and user ID
-        user_id = context._user_id  # Get the Telegram user ID
-        # user_id = update.message.from_user.id  # Get the Telegram user ID
-        timestamp = int(time.time() * 1000)  # Current time in milliseconds
-        unique_filename = f"{user_id}_{timestamp}.jpg"
-
-        # Define the path where you want to save the photo
-        file_path = os.path.join(save_directory, unique_filename)
-
-        # Download and save the photo
-        await photo_file.download_to_drive(custom_path=file_path)
+        file_path = await save_transaction_photo(update, context, save_directory)
         context.user_data["app_fee_trans_filepath"] = file_path
 
 
