@@ -48,6 +48,18 @@ def get_id_by_regCourseLangName(regCourseLangName):
     select_params = (regCourseLangName,)
     return db.select(select_query, select_params)
 
+def get_id_by_tolcExamTypeName(tolcExamTypeName):
+    db = Database.get_database()
+    select_query = "SELECT * FROM tolc_exam_type WHERE tolcExamTypeName = %s"
+    select_params = (tolcExamTypeName,)
+    return db.select(select_query, select_params)
+
+def get_tolcExamDetailName_by_tolcExamTypeId(tolcExamTypeId):
+    db = Database.get_database()
+    select_query = "SELECT * FROM tolc_exam_detail WHERE tolcExamTypeId = %s"
+    select_params = (tolcExamTypeId,)
+    return db.select(select_query, select_params)
+
 
 
 

@@ -13,9 +13,10 @@ import os
 from api import get_euro_to_toman_exchange_rate
 from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
-                        reg_uni_control,)
+                        reg_uni_control, get_id_by_tolcExamTypeName_control)
 import time
-from create_btn import reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang, reply_keyboard_tolc_exam_type
+from create_btn import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
+                        reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail)
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -177,17 +178,17 @@ def reserve_exam_keyboard() -> ReplyKeyboardMarkup:
 #         resize_keyboard=True,
 #     )
 
-def tolc_x_keyboard(x_suffix: str) -> ReplyKeyboardMarkup:
-    english_btn = KeyboardButton(f"ENGLISH TOLC-{x_suffix}")
-    iolc_btn = KeyboardButton(f"TOLC-{x_suffix}")
-    back_btn = KeyboardButton("بازگشت")
-    return ReplyKeyboardMarkup(
-        [
-            [english_btn, iolc_btn],
-            [back_btn],
-        ],
-        resize_keyboard=True,
-    )
+# def tolc_x_keyboard(x_suffix: str) -> ReplyKeyboardMarkup:
+#     english_btn = KeyboardButton(f"ENGLISH TOLC-{x_suffix}")
+#     iolc_btn = KeyboardButton(f"TOLC-{x_suffix}")
+#     back_btn = KeyboardButton("بازگشت")
+#     return ReplyKeyboardMarkup(
+#         [
+#             [english_btn, iolc_btn],
+#             [back_btn],
+#         ],
+#         resize_keyboard=True,
+#     )
 
 def tormagata_keyboard() -> ReplyKeyboardMarkup:
     pay_btn = KeyboardButton("پرداخت")
@@ -557,10 +558,10 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
 
 
 
-async def goto_italy_reserve_exam_tolc_x(update, message, x_suffix):
+async def goto_italy_reserve_exam_tolc_x(update, context, message):
     await update.message.reply_text(
         message,
-        reply_markup=tolc_x_keyboard(x_suffix)
+        reply_markup=reply_keyboard_tolc_exam_detail(context.user_data["tolcExamTypeId"])
     )
     return States.ITALY_RESERVE_EXAM_TOLC_X
 
@@ -581,8 +582,10 @@ async def italy_reserve_exam_tolc(update: Update, context: ContextTypes.DEFAULT_
         x_suffix = text.split("-")[1]
         context.user_data["current_x_full"] = text
         context.user_data["current_x_suffix"] = x_suffix
+        context.user_data["tolcExamTypeId"] = get_id_by_tolcExamTypeName_control(text)
+
         message = f"لطفاً {text} را انتخاب کنید:"
-        return await goto_italy_reserve_exam_tolc_x(update, message, x_suffix)
+        return await goto_italy_reserve_exam_tolc_x(update, context, message)
         # await update.message.reply_text(
         #     f"لطفاً {text} را انتخاب کنید:",
         #     reply_markup=tolc_x_keyboard(x_suffix)
@@ -624,9 +627,8 @@ async def handle_iolc_x_selection(update: Update, context: ContextTypes.DEFAULT_
         # return States.MINE_MENU
 
     else:
-        x_suffix = context.user_data.get("current_x_suffix", "8")
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
-        return await goto_italy_reserve_exam_tolc_x(update, message, x_suffix)
+        return await goto_italy_reserve_exam_tolc_x(update, context, message)
         # await update.message.reply_text(
         #     "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
         #     reply_markup=tolc_x_keyboard(x_suffix)
@@ -663,10 +665,9 @@ async def goto_mine_menu(update, message="آیا داخل سایت cisia دار�
 async def mine_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        x_suffix = context.user_data.get("current_x_suffix", "8")
         x_full = context.user_data.get("current_x_full", "8")
         message = f"لطفاً {x_full} را انتخاب کنید:"
-        return await goto_italy_reserve_exam_tolc_x(update, message, x_suffix)
+        return await goto_italy_reserve_exam_tolc_x(update, context, message)
         # await update.message.reply_text(
         #     f"لطفاً {x_full} را انتخاب کنید:",
         #     reply_markup=tolc_x_keyboard(x_suffix)
@@ -1517,10 +1518,7 @@ async def italy_register_university_tgid(update: Update, context: ContextTypes.D
     if update.message.text == "بازگشت":
         await update.message.reply_text(
             "لطفا زبان کورس خود را انتخاب کنید:",
-            reply_markup=ReplyKeyboardMarkup(
-                reply_keyboard_reg_course_lang(),
-                resize_keyboard=True,
-            )
+            reply_markup=reply_keyboard_reg_course_lang()
         )
         return States.ITALY_REGISTER_UNIVERSITY_LANGUAGE
     context.user_data["id"] = update.message.text
