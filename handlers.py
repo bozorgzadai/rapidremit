@@ -849,7 +849,7 @@ async def goto_payment(update, message=None):
 
 async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
-        save_directory = "tolc_exam"
+        save_directory = "saved_photo/tolc_exam"
         file_path = await save_transaction_photo(update, context, save_directory)
         context.user_data["tolc_exam_trans_filepath"] = file_path
 
@@ -1209,7 +1209,7 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
         return States.ITALY_APP_FEE_CONFIRM
 
     if update.message.photo:
-        save_directory = "app_and_tuition_fee"
+        save_directory = "saved_photo/app_and_tuition_fee"
         file_path = await save_transaction_photo(update, context, save_directory)
         context.user_data["app_fee_trans_filepath"] = file_path
 
