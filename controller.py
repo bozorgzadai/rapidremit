@@ -3,6 +3,8 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
                    get_cisia_account_by_tel_userId, update_cisia_account)
 
+from password_encryption import encrypting_password
+
 
 def get_id_by_regTypeName_control(regTypeName):
     result = get_id_by_regTypeName(regTypeName)
@@ -44,13 +46,15 @@ def insert_or_update_user(update, context):
         
 
 def insert_or_update_cisia_account(context):
+    encrypt_password = encrypting_password(context.user_data["cisia_account_password"])
+
     cisia_account = get_cisia_account_by_tel_userId(context._user_id)
     if len(cisia_account) == 0:
         insert_cisia_account(context._user_id, username=context.user_data["cisia_account_username"],
-                         password=context.user_data["cisia_account_password"])
+                         password=encrypt_password)
     else:
         update_cisia_account(context._user_id, username=context.user_data["cisia_account_username"],
-                             password=context.user_data["cisia_account_password"])
+                             password=encrypt_password)
         
 
 
