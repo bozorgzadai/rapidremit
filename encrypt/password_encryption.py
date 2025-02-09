@@ -1,4 +1,5 @@
 from cryptography.fernet import Fernet
+import os
 
 # # Generate a secret key once and store it securely (do not hardcode in production)
 # def generate_key():
@@ -8,7 +9,8 @@ from cryptography.fernet import Fernet
 
 # Load the secret key
 def load_key():
-    return open("secret.key", "rb").read()
+    file_path = os.path.join("encrypt", "secret.key")
+    return open(file_path, "rb").read()
 
 # Encrypt the password
 def encrypting_password(password):
