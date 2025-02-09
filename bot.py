@@ -10,7 +10,7 @@ from telegram.ext import (
 from config import TOKEN
 from handlers import (
     States,
-    start,
+    # start,
     main_menu_selection,
     buy_euro_amount,
     buy_euro_contact,
@@ -73,7 +73,7 @@ from handlers import (
     cisia_account_yes_pass2,
     cisia_account_yes_pass,
 
-
+    goto_main_menu,
     mine_menu,
     get_cisia_username,
     get_cisia_pass,
@@ -89,7 +89,7 @@ def main():
     application = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', goto_main_menu)],
         states={
             # منوی اصلی
             States.MAIN_MENU: [

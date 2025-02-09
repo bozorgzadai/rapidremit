@@ -241,26 +241,27 @@ def enseraf_menu() -> ReplyKeyboardMarkup:
         resize_keyboard=True,
     )
 
-# --- هندلرها ---
 
-# هندلر دستور /start
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def goto_main_menu(update, context, message=None):
+    default_message = "Welcome! Choose an option:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-        "Welcome! Choose an option:",
+        show_message,
         reply_markup=main_menu_keyboard()
     )
     return States.MAIN_MENU
 
+
 # هندلر انتخاب منوی اصلی
 async def main_menu_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    print("main")
     text = update.message.text
     if text == "خرید یورو":
-        await update.message.reply_text(
-            "لطفا مبلغی که نیاز به ترانسفر آن به حساب بانکی خود دارید به یورو وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.BUY_EURO_AMOUNT
+        return await goto_buy_euro(update)
     elif text == "Others":
         await update.message.reply_text(
             "لطفا توضیحات سفارش خود را وارد کنید:",
@@ -285,63 +286,72 @@ async def main_menu_selection(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=main_menu_keyboard()
         )
         return States.MAIN_MENU
+    
 
-# هندلر خرید یورو - دریافت مبلغ
+
+
+async def goto_buy_euro(update, message=None):
+    default_message = "لطفا مبلغی که نیاز به ترانسفر آن به حساب بانکی خود دارید به یورو وارد نمایید:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
+    await update.message.reply_text(
+        show_message,
+        reply_markup=back_button_keyboard()
+    )
+    return States.BUY_EURO_AMOUNT
+
 async def buy_euro_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "Welcome! Choose an option:",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        return await goto_main_menu(update, context)
     if text.isdigit():
         context.user_data["amount"] = float(text)
-        await update.message.reply_text(
-            "لطفا شماره خود را جهت ارتباطات بعدی وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.BUY_EURO_CONTACT
+        return await goto_buy_euro_contact(update)
     else:
-        await update.message.reply_text(
-            "لطفا یک عدد معتبر وارد کنید.",
-            reply_markup=back_button_keyboard()
-        )
-        return States.BUY_EURO_AMOUNT
+        message = "لطفا یک عدد معتبر وارد کنید."
+        goto_buy_euro(update, message)
 
-# هندلر خرید یورو - دریافت اطلاعات تماس
+
+
+async def goto_buy_euro_contact(update):
+    await update.message.reply_text(
+        "لطفا شماره خود را جهت ارتباطات بعدی وارد کنید:",
+        reply_markup=back_button_keyboard()
+    )
+    return States.BUY_EURO_CONTACT
+
 async def buy_euro_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا مبلغی که نیاز به ترانسفر آن به حساب بانکی خود دارید به یورو وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.BUY_EURO_AMOUNT
+        return await goto_buy_euro(update)
+
     context.user_data["contact"] = text
-    # پردازش داده‌ها یا ارسال به ادمین
+    return await goto_buy_euro_id(update)
+    
+
+
+
+async def goto_buy_euro_id(update):
     await update.message.reply_text(
         "لطفا آیدی خود را وارد کنید",
         reply_markup=back_button_keyboard()
     )
     return States.BUY_EURO_ID
-
+    
 async def buy_euro_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا مبلغی که نیاز به ترانسفر آن به حساب بانکی خود دارید به یورو وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.BUY_EURO_AMOUNT
+        goto_buy_euro_contact(update)
+
     context.user_data["id"] = text
-    # پردازش داده‌ها یا ارسال به ادمین
-    await update.message.reply_text(
-        "ادمین‌های پرداختی حوزه خرید یورو و تبدیل ارز در سریع‌ترین حالت با شما جهت اقدامات تکمیلی ارتباط خواهند گرفت.",
-        reply_markup=main_menu_keyboard()
-    )
     buy_euro_control(update, context)
-    return States.MAIN_MENU
+
+    message = "ادمین‌های پرداختی حوزه خرید یورو و تبدیل ارز در سریع‌ترین حالت با شما جهت اقدامات تکمیلی ارتباط خواهند گرفت."
+    return await goto_main_menu(update, context, message)
 
 
 # هندلر سفارشات دیگر - دریافت توضیحات
@@ -659,15 +669,6 @@ async def handle_iolc_x_selection(update: Update, context: ContextTypes.DEFAULT_
 
 
 
-async def goto_main_menu(update, message):
-    await update.message.reply_text(
-        message,
-        reply_markup=main_menu_keyboard()
-    )
-    return States.MAIN_MENU
-
-
-
 async def goto_mine_menu(update, message="آیا داخل سایت cisia دارای اکانت هستید؟"):
     await update.message.reply_text(
         message,
@@ -826,7 +827,7 @@ async def confirm_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     elif text == "پرداخت":
         return await goto_payment(update)
     elif text == "انصراف":
-        return await goto_main_menu(update)
+        return await goto_main_menu(update, context)
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_confirm_payment(update, message)
@@ -860,7 +861,7 @@ async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             insert_or_update_cisia_account(context)
 
         message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
-        return await goto_main_menu(update, message)
+        return await goto_main_menu(update, context, message)
     else:
         message = "لطفا یک عکس از فیش پرداختی خود ارسال کنید."
         return await goto_payment(update, message)
@@ -1303,7 +1304,8 @@ async def takmil_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     return States.MAIN_MENU
 
 # هندلر لغو عملیات (اختیاری)
-async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE, message="test") -> int:
+    print(message)
     await update.message.reply_text(
         "عملیات لغو شد. برای شروع مجدد /start را بزنید.",
         reply_markup=ReplyKeyboardMarkup(
