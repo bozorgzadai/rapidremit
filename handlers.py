@@ -13,7 +13,8 @@ import os
 from api import get_euro_to_toman_exchange_rate
 from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
-                        reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control)
+                        reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control,
+                        insert_or_update_cisia_account, tolc_order_exam_control)
 import time
 from create_btn import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
                         reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail)
@@ -852,6 +853,11 @@ async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         save_directory = "saved_photo/tolc_exam"
         file_path = await save_transaction_photo(update, context, save_directory)
         context.user_data["tolc_exam_trans_filepath"] = file_path
+
+        tolc_order_exam_control(update, context)
+
+        if context.user_data["have_cisia_account"]:
+            insert_or_update_cisia_account(context)
 
         message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
         return await goto_main_menu(update, message)

@@ -30,6 +30,12 @@ def get_user_by_id(user_id):
     select_params = (user_id,)
     return db.select(select_query, select_params)
 
+def get_cisia_account_by_tel_userId(tel_userId):
+    db = Database.get_database()
+    select_query = "SELECT * FROM cisia_account WHERE tel_userId = %s"
+    select_params = (tel_userId,)
+    return db.select(select_query, select_params)
+
 def get_id_by_regTypeName(regTypeName):
     db = Database.get_database()
     select_query = "SELECT * FROM reg_type WHERE regTypeName = %s"
@@ -117,13 +123,37 @@ def insert_reg_uni(tel_userId, regTypeId='', regCourseLevelId='', regCourseLangI
     db.execute(insert_query, insert_params)
 
 
+def insert_tolc_order_exam(tel_userId, tolcExamDetailId='', examDate='', trans_filePath='', finish=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO tolc_order_exam(tel_userId, tolcExamDetailId, examDate, trans_filePath, finish)
+                                    VALUES (%s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, tolcExamDetailId, examDate, trans_filePath, finish)
+    db.execute(insert_query, insert_params)
+
+
+def insert_cisia_account(tel_userId, username='', password=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO cisia_account(tel_userId, username, password)
+                                    VALUES (%s, %s, %s)"""
+    insert_params = (tel_userId, username, password)
+    db.execute(insert_query, insert_params)
+
+
 
 
 def update_user(userId, userName='', userFirstName='', userLastName='', phoneNumber='', birthDate='', passport_photo=''):
     db = Database.get_database()
-    update_query = """ UPDATE user SET userName=%s,userFirstName=%s,userLastName=%s,phoneNumber=%s,birthDate=%s,passport_photo=%s
+    update_query = """ UPDATE user SET userName=%s, userFirstName=%s, userLastName=%s, phoneNumber=%s, birthDate=%s, passport_photo=%s
                                         WHERE tel_userId = %s"""
     update_params = (userName, userFirstName, userLastName, phoneNumber, birthDate, passport_photo, userId)
     db.execute(update_query, update_params)
 
+
+def update_cisia_account(tel_userId, username='', password=''):
+    db = Database.get_database()
+    
+    update_query = """ UPDATE cisia_account SET username=%s, password=%s
+                                        WHERE tel_userId = %s"""
+    update_params = (tel_userId, username, password)
+    db.execute(update_query, update_params)
 

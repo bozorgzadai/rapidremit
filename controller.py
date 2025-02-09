@@ -1,6 +1,7 @@
 from model import (get_user_by_id, insert_user, update_user, insert_buy_currency, insert_other_order,
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
-                   insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName)
+                   insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
+                   get_cisia_account_by_tel_userId, update_cisia_account)
 
 
 def get_id_by_regTypeName_control(regTypeName):
@@ -40,6 +41,17 @@ def insert_or_update_user(update, context):
         update_user(userId=context._user_id, userName=update.message.from_user.username,
                     userFirstName=update.message.from_user.first_name, userLastName=update.message.from_user.last_name,
                     phoneNumber=context.user_data["contact"])
+        
+
+def insert_or_update_cisia_account(context):
+    cisia_account = get_cisia_account_by_tel_userId(context._user_id)
+    if len(cisia_account) == 0:
+        insert_cisia_account(context._user_id, username=context.user_data["cisia_account_username"],
+                         password=context.user_data["cisia_account_password"])
+    else:
+        update_cisia_account(context._user_id, username=context.user_data["cisia_account_username"],
+                             password=context.user_data["cisia_account_password"])
+        
 
 
 
@@ -70,8 +82,13 @@ def reg_uni_control(update, context):
     insert_reg_uni(context._user_id, regTypeId=context.user_data["university_type"], regCourseLevelId=context.user_data["course_level"],
                    regCourseLangId=context.user_data["course_lang"], uniName=context.user_data["university_name"],
                    courseName=context.user_data["course_name"], finish=0)
-
     
+def tolc_order_exam_control(update, context):
+    insert_or_update_user(update, context)
+    insert_tolc_order_exam(context._user_id, tolcExamDetailId=context.user_data["tolcExamDetailId"],
+                           examDate=context.user_data["told_exam_date"], trans_filePath=context.user_data["tolc_exam_trans_filepath"],
+                           finish=0)
+
 
 
 
