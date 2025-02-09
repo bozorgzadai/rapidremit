@@ -3,7 +3,7 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
                    get_cisia_account_by_tel_userId, update_cisia_account)
 
-from password_encryption import encrypting_password
+from encrypt.password_encryption import encrypting_password
 
 
 def get_id_by_regTypeName_control(regTypeName):
