@@ -11,14 +11,14 @@ from config import TOKEN
 from handlers import (
     States,
     # start,
-    main_menu_selection,
+    main_menu,
     buy_euro_amount,
     buy_euro_contact,
     buy_euro_id,
     others_description,
     others_amount,
     others_contact,
-    italy_main_menu,
+    italy,
     italy_reserve_exam,
     italy_reserve_exam_tolc,
     handle_iolc_x_selection,
@@ -35,12 +35,12 @@ from handlers import (
     reserve_tormagata_contact,
     handle_payment_receipt,
     # توابع جدید مربوط به چیمه آ
-    italy_cimea_type,
+    italy_cimea,
     italy_cimea_receipt,
     italy_cimea_confirm,
     italy_cimea_speed,
     # توابع جدید مربوط به اپ فی
-    italy_app_fee_university,
+    italy_app_fee_uni,
     italy_app_fee_degree,
     italy_app_fee_tgid,
     italy_app_fee_contact,
@@ -57,7 +57,7 @@ from handlers import (
     handle_phone_number,
     handle_payment,
 
-    italy_reserve_hotel_tgid,
+    italy_reserve_hotel_id,
     italy_reserve_hotel_contact,
 
     # توابع جدید برای ثبت نام دانشگاه
@@ -74,7 +74,7 @@ from handlers import (
     cisia_account_yes_pass,
 
     goto_main_menu,
-    mine_menu,
+    WAITING_FOR_PAYMENTa_account,
     get_cisia_username,
     get_cisia_pass,
     get_exam_date,
@@ -93,7 +93,7 @@ def main():
         states={
             # منوی اصلی
             States.MAIN_MENU: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, main_menu_selection)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, main_menu)
             ],
 
             # خرید یورو
@@ -125,8 +125,8 @@ def main():
 
 
 
-            States.MINE_MENU: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, mine_menu)
+            States.HAVE_CISIA_ACCOUNT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, have_cisia_account)
             ],
             States.GET_CISIA_USERNAME: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, get_cisia_username)
@@ -158,8 +158,8 @@ def main():
 
 
             # منوی Italy
-            States.ITALY_MAIN_MENU: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_main_menu)
+            States.ITALY: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, italy)
             ],
             States.ITALY_RESERVE_EXAM: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_exam)
@@ -172,11 +172,8 @@ def main():
             ],
 
             # چیمه آ
-            States.ITALY_CIMEA_PAYMENT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_payment)
-            ],
-            States.ITALY_CIMEA_TYPE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_type)
+            States.ITALY_CIMEA: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea)
             ],
             States.ITALY_CIMEA_SPEED: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_speed)
@@ -194,7 +191,7 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee)
             ],
             States.ITALY_APP_FEE_UNI: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee_university),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee_uni),
             ],
             States.ITALY_APP_FEE_DEGREE: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee_degree),
@@ -220,8 +217,8 @@ def main():
             States.ITALY_RESERVE_HOTEL: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel)
             ],
-            States.ITALY_RESERVE_HOTEL_TGID: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel_tgid)
+            States.ITALY_RESERVE_HOTEL_ID: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel_id)
             ],
             States.ITALY_RESERVE_HOTEL_CONTACT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel_contact)

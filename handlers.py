@@ -28,12 +28,11 @@ class States(Enum):
     OTHERS_AMOUNT = auto()
     OTHERS_CONTACT = auto()
     OTHERS_ID = auto()
-    ITALY_MAIN_MENU = auto()
+    ITALY = auto()
     ITALY_RESERVE_EXAM = auto()
     ITALY_RESERVE_EXAM_TOLC = auto()
     ITALY_RESERVE_EXAM_TOLC_X = auto()
-    ITALY_CIMEA_PAYMENT = auto()
-    ITALY_CIMEA_TYPE = auto()
+    ITALY_CIMEA = auto()
     ITALY_CIMEA_SPEED = auto()
     ITALY_CIMEA_CONFIRM = auto()
     ITALY_CIMEA_RECEIPT = auto()
@@ -67,7 +66,7 @@ class States(Enum):
     # اضافه کردن حالت جدید برای مدیریت فیش پرداخت
     WAITING_FOR_PAYMENT = auto()
 
-    ITALY_RESERVE_HOTEL_TGID = auto()  # وارد کردن آیدی تلگرام برای رزرو هتل و هواپیما
+    ITALY_RESERVE_HOTEL_ID = auto()  # وارد کردن آیدی تلگرام برای رزرو هتل و هواپیما
     ITALY_RESERVE_HOTEL_CONTACT = auto()  # وارد کردن شماره تماس برای رزرو هتل و هواپیما
 
     # حالات جدید برای ثبت نام دانشگاه
@@ -86,7 +85,7 @@ class States(Enum):
     ITALY_RESERVE_EXAM_TOLC_PASS = auto()
 
 
-    MINE_MENU = auto()
+    HAVE_CISIA_ACCOUNT = auto()
     GET_CISIA_USERNAME = auto()
     GET_CISIA_PASS = auto()
     GET_EXAM_DATE = auto()
@@ -120,7 +119,7 @@ async def save_transaction_photo(update, context, save_directory):
 def main_menu_keyboard() -> ReplyKeyboardMarkup:
     buy_euro_btn = KeyboardButton("خرید یورو")
     italy_btn = KeyboardButton("Italy")
-    others_btn = KeyboardButton("Others")
+    others_btn = KeyboardButton("موارد دیگر")
     takmil_btn = KeyboardButton("تکمیل سفارشات قبلی")
     return ReplyKeyboardMarkup(
         [
@@ -176,74 +175,31 @@ def reserve_exam_keyboard() -> ReplyKeyboardMarkup:
         resize_keyboard=True,
     )
 
-# def reply_keyboard_tolc_exam_type() -> ReplyKeyboardMarkup:
-#     tolc_i_btn = KeyboardButton("TOLC-I")
-#     tolc_f_btn = KeyboardButton("TOLC-F")
-#     tolc_e_btn = KeyboardButton("TOLC-E")
-#     tolc_s_btn = KeyboardButton("TOLC-S")
-#     tolc_su_btn = KeyboardButton("TOLC-SU")
-#     tolc_b_btn = KeyboardButton("TOLC-B")
-#     tolc_av_btn = KeyboardButton("TOLC-AV")
-#     tolc_psi_btn = KeyboardButton("TOLC-PSi")
-#     tolc_sb_btn = KeyboardButton("TOLC-SB")
-#     tolc_lp_btn = KeyboardButton("TOLC-LP")
-#     back_btn = KeyboardButton("بازگشت")
-#     return ReplyKeyboardMarkup(
-#         [
-#             [tolc_i_btn, tolc_f_btn],
-#             [tolc_e_btn, tolc_s_btn],
-#             [tolc_su_btn, tolc_b_btn],
-#             [tolc_av_btn, tolc_psi_btn],
-#             [tolc_sb_btn, tolc_lp_btn],
-#             [back_btn],
-#         ],
-#         resize_keyboard=True,
-#     )
-
-# def tolc_x_keyboard(x_suffix: str) -> ReplyKeyboardMarkup:
-#     english_btn = KeyboardButton(f"ENGLISH TOLC-{x_suffix}")
-#     iolc_btn = KeyboardButton(f"TOLC-{x_suffix}")
-#     back_btn = KeyboardButton("بازگشت")
-#     return ReplyKeyboardMarkup(
-#         [
-#             [english_btn, iolc_btn],
-#             [back_btn],
-#         ],
-#         resize_keyboard=True,
-#     )
-
-def tormagata_keyboard() -> ReplyKeyboardMarkup:
+def pay_cancel_keyboard() -> ReplyKeyboardMarkup:
     pay_btn = KeyboardButton("پرداخت")
     cancel_btn = KeyboardButton("انصراف")
-    return ReplyKeyboardMarkup(
-        [
-            [cancel_btn, pay_btn],
-        ],
-        resize_keyboard=True,
-    )
-
-def app_fee_confirm_keyboard() -> ReplyKeyboardMarkup:
-    pay_btn = KeyboardButton("پرداخت")
-    cancel_btn = KeyboardButton("انصراف")
+    back_btn = KeyboardButton("بازگشت")
     return ReplyKeyboardMarkup(
         [
             [pay_btn, cancel_btn],
+            [back_btn],
         ],
         resize_keyboard=True,
     )
 
 def enseraf_menu() -> ReplyKeyboardMarkup:
     cancel_btn = KeyboardButton("انصراف")
+    back_btn = KeyboardButton("بازگشت")
     return ReplyKeyboardMarkup(
         [
-            [cancel_btn],
+            [back_btn, cancel_btn],
         ],
         resize_keyboard=True,
     )
 
 
 async def goto_main_menu(update, context, message=None):
-    default_message = "Welcome! Choose an option:"
+    default_message = "خوش آمدید! یک گزینه را انتخاب کنید:"
 
     if message:
         show_message = message
@@ -256,37 +212,30 @@ async def goto_main_menu(update, context, message=None):
     )
     return States.MAIN_MENU
 
-
-# هندلر انتخاب منوی اصلی
-async def main_menu_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
-    if text == "خرید یورو":
+    if text == "Italy":
+        return await goto_italy(update)
+    elif text == "خرید یورو":
         return await goto_buy_euro(update)
-    elif text == "Others":
-        await update.message.reply_text(
-            "لطفا توضیحات سفارش خود را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.OTHERS_DESCRIPTION
-    elif text == "Italy":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=italy_main_menu_keyboard()
-        )
-        return States.ITALY_MAIN_MENU
+    elif text == "موارد دیگر":
+        return await goto_others(update)
     elif text == "تکمیل سفارشات قبلی":
-        await update.message.reply_text(
-            "لطفا شماره سفارشی را که از ادمین های پرداختی دریافت کرده اید را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TAKMIL_ORDER_NUMBER
+        return await goto_complete_prev_orther(update)
     else:
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
+        return await goto_main_menu(update, context, message)
     
+
+
+
+async def goto_complete_prev_orther(update):
+    await update.message.reply_text(
+        "لطفا شماره سفارشی را که از ادمین های پرداختی دریافت کرده اید را وارد کنید:",
+        reply_markup=back_button_keyboard()
+    )
+    return States.TAKMIL_ORDER_NUMBER
+
 
 
 
@@ -334,7 +283,6 @@ async def buy_euro_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     
 
 
-
 async def goto_buy_euro_id(update):
     await update.message.reply_text(
         "لطفا آیدی خود را وارد کنید",
@@ -354,56 +302,70 @@ async def buy_euro_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     return await goto_main_menu(update, context, message)
 
 
-# هندلر سفارشات دیگر - دریافت توضیحات
+
+
+async def goto_others(update):
+    await update.message.reply_text(
+        "لطفا توضیحات سفارش خود را وارد کنید:",
+        reply_markup=back_button_keyboard()
+    )
+    return States.OTHERS_DESCRIPTION
+
 async def others_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "Welcome! Choose an option:",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        return await goto_main_menu(update, context)
+    
     context.user_data["description"] = text
+    return await goto_others_amount(update)
+    
+
+
+async def goto_others_amount(update, message=None):
+    default_message = "لطفا مبلغ قابل پرداخت در سفارش را به یورو وارد کنید:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-        "لطفا مبلغ قابل پرداخت در سفارش را به یورو وارد کنید:",
+        show_message,
         reply_markup=back_button_keyboard()
     )
     return States.OTHERS_AMOUNT
 
-# هندلر سفارشات دیگر - دریافت مبلغ
 async def others_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا توضیحات سفارش خود را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.OTHERS_DESCRIPTION
+        return await goto_others(update)
     if text.isdigit():
         context.user_data["amount"] = float(text)
-        await update.message.reply_text(
-            "لطفا شماره تماس خود را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.OTHERS_CONTACT
+        return await goto_others_contact(update)
     else:
-        await update.message.reply_text(
-            "لطفا یک عدد معتبر وارد کنید.",
-            reply_markup=back_button_keyboard()
-        )
-        return States.OTHERS_AMOUNT
+        message = "لطفا یک عدد معتبر وارد کنید."
+        return await goto_others_amount(update, message)
 
-# هندلر سفارشات دیگر - دریافت اطلاعات تماس
+
+
+async def goto_others_contact(update):
+    await update.message.reply_text(
+        "لطفا شماره تماس خود را وارد کنید:",
+        reply_markup=back_button_keyboard()
+    )
+    return States.OTHERS_CONTACT
+
 async def others_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا مبلغ قابل پرداخت در سفارش را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.OTHERS_AMOUNT
+        return await goto_others_amount(update)
+    
     context.user_data["contact"] = text
-    # پردازش داده‌ها یا ارسال به ادمین
+    return await goto_others_id(update)
+    
+
+
+async def goto_others_id(update):
     await update.message.reply_text(
         "لطفا آیدی خود را وارد نمایید",
         reply_markup=back_button_keyboard()
@@ -413,179 +375,209 @@ async def others_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 async def others_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا مبلغ قابل پرداخت در سفارش را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.OTHERS_AMOUNT
+        return await goto_others_contact(update)
+    
     context.user_data["id"] = text
-    # پردازش داده‌ها یا ارسال به ادمین
-    await update.message.reply_text(
-        "سفارش شما ثبت شد. ادمین به زودی با شما تماس خواهد گرفت.",
-        reply_markup=main_menu_keyboard()
-    )
     other_order_control(update, context)
-    return States.MAIN_MENU
 
-# هندلر منوی Italy
-async def italy_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    message = "سفارش شما ثبت شد. ادمین به زودی با شما تماس خواهد گرفت."
+    return await goto_main_menu(update, context, message)
+
+
+
+
+
+async def goto_italy(update, message=None):
+    default_message = "لطفا یکی از گزینه‌های زیر را انتخاب کنید:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
+    await update.message.reply_text(
+        show_message,
+        reply_markup=italy_main_menu_keyboard()
+    )
+    return States.ITALY
+
+async def italy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
+    if text == "بازگشت":
+        return await goto_main_menu(update, context)
     if text == "رزرو آزمون":
-        await update.message.reply_text(
-            "لطفا نوع آزمون را انتخاب کنید:",
-            reply_markup=reserve_exam_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM
-
-    elif text == "بازگشت":
-        await update.message.reply_text(
-            "Welcome! Choose an option:",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
-
+        return await goto_italy_reserve_exam(update)
     elif text == "پرداخت چیمه آ(CIMEA)":
-        return await italy_cimea_payment(update, context)
-
+        return await goto_italy_cimea(update)
     elif text == "اپ فی":
         context.user_data["is_app_fee"] = True
-        # وقتی کاربر اپ فی را می‌زند، وارد مرحله نخست اپ فی شویم
-        return await italy_app_fee(update, context)
-
+        return await goto_italy_app_fee_uni(update, context)
     elif text == "شهریه دانشگاه":
         context.user_data["is_app_fee"] = False
-        # می‌خواهیم از همین منطق اپ فی استفاده کنیم
-        return await italy_app_fee(update, context)
-
+        return await goto_italy_app_fee_uni(update, context)
     elif text == "رزرو هتل و هواپیما":
-        return await italy_reserve_hotel(update, context)
-
+        return await goto_italy_reserve_hotel_id(update, context)
     elif text == "ثبت نام دانشگاه":
-        return await italy_register_university(update, context)
-
+        return await goto_italy_register_university_name(update)
     else:
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
-            reply_markup=italy_main_menu_keyboard()
-        )
-        return States.ITALY_MAIN_MENU
+        message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
+        return await goto_italy(update, message)
 
-# هندلر انتخاب رزرو آزمون در Italy
+
+async def goto_italy_reserve_exam(update, message=None):
+    default_message = "لطفا نوع آزمون را انتخاب کنید:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
+    await update.message.reply_text(
+        show_message,
+        reply_markup=reserve_exam_keyboard()
+    )
+    return States.ITALY_RESERVE_EXAM
+
 async def italy_reserve_exam(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=italy_main_menu_keyboard()
-        )
-        return States.ITALY_MAIN_MENU
+        return await goto_italy(update)
     elif text == "TOLC":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
+        return await goto_italy_reserve_exam_tolc(update)
     elif text == "داروسازی تورورگاتا":
-        await update.message.reply_text(
-            "لطفا آیدی خود را وارد نمایید",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TORMAGATA_ID
-
-        
+        return await goto_reserve_tormagata_id(update)
     elif text in ["IMAT","TIL", "ARCHED"]:
-        await update.message.reply_text(
-            f"اطلاعات آزمون درخواستی یافت نشد لطفا جهت اطلاعات بیشتر با پشتیبانی Rapid Remit به نشانی زیر ارتباط بگیرید \n @Rapidremit_support\n",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        message = "اطلاعات آزمون درخواستی یافت نشد لطفا جهت اطلاعات بیشتر با پشتیبانی Rapid Remit به نشانی زیر ارتباط بگیرید \n @Rapidremit_support\n",
+        return await goto_main_menu(update, context, message)
     else:
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
-            reply_markup=reserve_exam_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM
+        message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
+        return await goto_italy_reserve_exam(update, message)
 
+
+async def goto_reserve_tormagata_id(update):
+    await update.message.reply_text(
+        "لطفا آیدی خود را وارد نمایید",
+        reply_markup=back_button_keyboard()
+    )
+    return States.TORMAGATA_ID
 
 async def reserve_tormagata_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه های زیر را انتخاب نمایید",
-            reply_markup=italy_main_menu_keyboard()
-        )
-        return States.ITALY_MAIN_MENU
-    else:
-        context.user_data["amount"] = text
-        await update.message.reply_text(
-            "لطفا شماره تلفن خود را جهت ارتباطات بعدی وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TORMAGATA_CONTACT
+        return await goto_italy_reserve_exam(update)
+
+    context.user_data["amount"] = text
+    return await goto_reserve_tormagata_contact(update)
+    
 
 
-# هندلر خرید یورو - دریافت اطلاعات تماس
+async def goto_reserve_tormagata_contact(update):
+    await update.message.reply_text(
+        "لطفا شماره تلفن خود را جهت ارتباطات بعدی وارد کنید:",
+        reply_markup=back_button_keyboard()
+    )
+    return States.TORMAGATA_CONTACT
+
 async def reserve_tormagata_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا شماره تلفن خود را وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TORMAGATA_ID
+        return await goto_reserve_tormagata_id(update)
+    
     context.user_data["contact"] = text
-    # پردازش داده‌ها یا ارسال به ادمین
+    return await goto_reserve_tormagata(update)
+
+    
+
+async def goto_reserve_tormagata(update, message=None):
+    default_message = "داوطلب گرامی هزینه شرکت در آزمون داروسازی تورورگاتا (کورس انگلیسی داروسازی) 1000 ریال می‌باشد اگر قصد تکمیل خرید خود را دارید با استفاده از گزینه پرداخت ادامه دهید"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-            "داوطلب گرامی هزینه شرکت در آزمون داروسازی تورورگاتا (کورس انگلیسی داروسازی) 1000 ریال می‌باشد اگر قصد تکمیل خرید خود را دارید با استفاده از گزینه پرداخت ادامه دهید",
-            reply_markup=tormagata_keyboard()
-        )
+        show_message,
+        reply_markup=pay_cancel_keyboard()
+    )
     return States.TORMAGATA
 
-
-# هندلر پرداخت آزمون تورموگاتا
 async def reserve_tormagata(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
-    if text == "انصراف":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+    if text == "بازگشت":
+        return await goto_reserve_tormagata_contact(update)
+    elif text == "انصراف":
+        return await goto_main_menu(update, context)
     elif text == "پرداخت":
-        await update.message.reply_text(
-            "لطفا هزینه درخواست جاری خود را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید.",
-            reply_markup=enseraf_menu()
-        )
-        return States.WAITING_FOR_PAYMENT
+        return await goto_handle_payment_receipt(update)
     else: 
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=tormagata_keyboard()
-        )
-        return States.TORMAGATA
+        message = "لطفا یکی از گزینه‌های زیر را انتخاب کنید:"
+        return await goto_reserve_tormagata(update, message)
 
-# هندلر دریافت فیش پرداخت (عکس) یا متن اشتباه
+
+
+async def goto_handle_payment_receipt(update, message=None):
+    default_message = "لطفا هزینه درخواست جاری خود را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید."
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
+    await update.message.reply_text(
+        show_message,
+        reply_markup=enseraf_menu()
+    )
+    return States.WAITING_FOR_PAYMENT
+
 async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
-        await update.message.reply_text(
-            "کاربر گرامی، درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت.",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        message = "کاربر گرامی، درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
+        return await goto_main_menu(update, context, message)
+    elif update.message.text=="بازگشت":
+        return await goto_reserve_tormagata(update)
     elif update.message.text=="انصراف":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه ها را انتخاب کنید.",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        return await goto_main_menu(update, context)
     else:
-        await update.message.reply_text("لطفا یک تصویر از فیش پرداختی خود ارسال کنید.")
-        return States.WAITING_FOR_PAYMENT
+        message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
+        return await goto_handle_payment_receipt(update, message)
 
 
 
 
 
+
+
+
+
+async def goto_italy_reserve_exam_tolc(update, message=None):
+    default_message = "لطفا یکی از گزینه‌های زیر را انتخاب کنید:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
+    await update.message.reply_text(
+        show_message,
+        reply_markup=reply_keyboard_tolc_exam_type()
+    )
+    return States.ITALY_RESERVE_EXAM_TOLC
+
+async def italy_reserve_exam_tolc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    text = update.message.text
+    if text == "بازگشت":
+        return await goto_italy_reserve_exam(update)
+    
+    elif text.startswith("TOLC-"):
+        context.user_data["tolcExamTypeName"] = text
+        context.user_data["tolcExamTypeId"] = get_id_by_tolcExamTypeName_control(text)
+
+        message = f"لطفاً {text} را انتخاب کنید:"
+        return await goto_italy_reserve_exam_tolc_x(update, context, message)
+    else:
+        message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
+        return await goto_italy_reserve_exam_tolc(update, message=None)
 
 
 
@@ -597,81 +589,30 @@ async def goto_italy_reserve_exam_tolc_x(update, context, message):
     )
     return States.ITALY_RESERVE_EXAM_TOLC_X
 
-
-
-
-
-# هندلر انتخاب نوع آزمون TOLC در Italy
-async def italy_reserve_exam_tolc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا نوع آزمون را انتخاب کنید:",
-            reply_markup=reserve_exam_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM
-    if text.startswith("TOLC-"):
-        context.user_data["tolcExamTypeName"] = text
-        context.user_data["tolcExamTypeId"] = get_id_by_tolcExamTypeName_control(text)
-
-        message = f"لطفاً {text} را انتخاب کنید:"
-        return await goto_italy_reserve_exam_tolc_x(update, context, message)
-        # await update.message.reply_text(
-        #     f"لطفاً {text} را انتخاب کنید:",
-        #     reply_markup=tolc_x_keyboard(x_suffix)
-        # )
-        # return States.ITALY_RESERVE_EXAM_TOLC_X
-    else:
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
-
-
-
-# هندلر انتخاب ENGLISH TOLC-X یا TOLC-X در Italy
 async def handle_iolc_x_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
+        return await goto_italy_reserve_exam_tolc(update)
     
     if text.startswith("ENGLISH TOLC-") or text.startswith("TOLC-"):
         context.user_data["tolcExamDetailId"] = get_id_by_tolcExamDetailName_control(text)
-        return await goto_mine_menu(update)
-        # نمایش سوال مربوط به داشتن اکانت در سایت CISIA
-        # await update.message.reply_text(
-        #     "آیا داخل سایت cisia دارای اکانت هستید؟",
-        #     reply_markup=ReplyKeyboardMarkup(
-        #         [
-        #             [KeyboardButton("بله"), KeyboardButton("خیر")],
-        #             [KeyboardButton("بازگشت")]
-        #         ],
-        #         resize_keyboard=True,
-        #     )
-        # )
-        # # return States.ITALY_RESERVE_EXAM_CISIA_ACCOUNT
-        # return States.MINE_MENU
-
+        return await goto_have_cisia_account(update)
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_italy_reserve_exam_tolc_x(update, context, message)
-        # await update.message.reply_text(
-        #     "لطفا یکی از گزینه‌های موجود را انتخاب کنید.",
-        #     reply_markup=tolc_x_keyboard(x_suffix)
-        # )
-        # return States.ITALY_RESERVE_EXAM_TOLC_X
 
 
 
+async def goto_have_cisia_account(update, message=None):
+    default_message = "آیا داخل سایت cisia دارای اکانت هستید؟"
 
-async def goto_mine_menu(update, message="آیا داخل سایت cisia دارای اکانت هستید؟"):
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-        message,
+        show_message,
         reply_markup=ReplyKeyboardMarkup(
             [
                 [KeyboardButton("بله"), KeyboardButton("خیر")],
@@ -680,20 +621,14 @@ async def goto_mine_menu(update, message="آیا داخل سایت cisia دار�
             resize_keyboard=True,
         )
     )
-    # return States.ITALY_RESERVE_EXAM_CISIA_ACCOUNT
-    return States.MINE_MENU
+    return States.HAVE_CISIA_ACCOUNT
 
-async def mine_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def have_cisia_account(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        x_full = context.user_data.get("tolcExamTypeName", "8")
+        x_full = context.user_data["tolcExamTypeName"]
         message = f"لطفاً {x_full} را انتخاب کنید:"
         return await goto_italy_reserve_exam_tolc_x(update, context, message)
-        # await update.message.reply_text(
-        #     f"لطفاً {x_full} را انتخاب کنید:",
-        #     reply_markup=tolc_x_keyboard(x_suffix)
-        # )
-        # return States.ITALY_RESERVE_EXAM_TOLC_X
 
     elif text == "بله":
         context.user_data["have_cisia_account"] = True
@@ -705,7 +640,7 @@ async def mine_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
-        return await goto_mine_menu(update, message)
+        return await goto_have_cisia_account(update, message)
 
 
 
@@ -719,7 +654,7 @@ async def goto_get_cisia_username(update):
 async def get_cisia_username(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await goto_mine_menu(update)
+        return await goto_have_cisia_account(update)
 
     context.user_data["cisia_account_username"] = update.message.text
     return await goto_get_cisia_pass(update)
@@ -756,7 +691,7 @@ async def get_exam_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         if context.user_data["have_cisia_account"]:
             return await goto_get_cisia_pass(update)
         else:
-            return await goto_mine_menu(update)
+            return await goto_have_cisia_account(update)
 
     context.user_data["told_exam_date"] = update.message.text
     return await goto_get_id(update)
@@ -810,13 +745,7 @@ async def goto_confirm_payment(update, message=None):
     
     await update.message.reply_text(
         show_message,
-        reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("پرداخت"), KeyboardButton("انصراف")],
-                [KeyboardButton("بازگشت")],
-            ],
-            resize_keyboard=True
-        )
+        reply_markup=pay_cancel_keyboard()
     )
     return States.CONFIRM_PAYMENT
 
@@ -870,185 +799,24 @@ async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 
-
-
-async def cisia_account_yes(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
-    
-    if text == "بله":
-        # از کاربر نام کاربری و رمز عبور درخواست شود
-        await update.message.reply_text(
-            "لطفا نام کاربری سایت cisia خود را وارد کنید",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC_PASS
-
-async def cisia_account_yes_pass(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
-    
-        # از کاربر نام کاربری و رمز عبور درخواست شود
-    await update.message.reply_text(
-        "لطفا رمز  سایت cisia خود را وارد کنید",
-        reply_markup=back_button_keyboard()
-    )
-    return States.ITALY_RESERVE_EXAM_TOLC_PASS2
-
-async def cisia_account_yes_pass2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    await update.message.reply_text(
-        "لطفا روز آزمون درخواستی را برای ما بنویسید",
-        reply_markup=back_button_keyboard()
-    )
-    return States.ITALY_RESERVE_EXAM_DATE
-
-
-async def handle_cisia_account_no(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
-
-    # اگر کاربر "خیر" را انتخاب کند
-    await update.message.reply_text(
-        "لطفا روز آزمون درخواستی را برای ما بنویسید",
-        reply_markup=back_button_keyboard()
-    )
-    return States.ITALY_RESERVE_EXAM_DATE
-
-async def handle_exam_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=reply_keyboard_tolc_exam_type()
-        )
-        return States.ITALY_RESERVE_EXAM_TOLC
-
-    context.user_data["exam_date"] = update.message.text
-    await update.message.reply_text(
-        "لطفا آیدی خود را وارد نمایید",
-        reply_markup=back_button_keyboard()
-    )
-    return States.ITALY_RESERVE_EXAM_TGID
-
-
-async def handle_telegram_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    if update.message.text == "بازگشت":
-        await update.message.reply_text(
-        "لطفا روز آزمون درخواستی را برای ما بنویسید",
-        reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM_DATE
-
-
-    context.user_data["id"] = update.message.text
-    await update.message.reply_text(
-        "لطفا شماره تلفن خود را وارد نمایید",
-        reply_markup=back_button_keyboard()
-    )
-    return States.ITALY_RESERVE_EXAM_PHONE
-
-
-async def handle_phone_number(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    if update.message.text == "بازگشت":
-        await update.message.reply_text(
-        "لطفا روز آزمون درخواستی را برای ما بنویسید",
-        reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM_DATE
-
-    context.user_data["phone_number"] = update.message.text
-    exam_fee = "1000000"  # هزینه به تومان
-    await update.message.reply_text(
-        f"داوطلب گرامی هزینه شرکت در آزمون فلان {exam_fee} تومان می‌باشد.\n"
-        "اگر صحت اطلاعات خود و موجودی ظرفیت در روز درخواستی اطلاع دارید با استفاده از گزینه پرداخت درخواست خود را تکمیل کنید.",
-        reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("پرداخت"), KeyboardButton("انصراف")],
-            ],
-            resize_keyboard=True
-        )
-    )
-    return States.ITALY_RESERVE_EXAM_PAYMENT
-
-async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    if update.message.text == "پرداخت":
-        # ارسال شماره کارت
-        await update.message.reply_text(
-            "لطفا هزینه درخواست جاری خود را به شماره کارت فلان واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_RESERVE_EXAM_RECEIPT
-    elif update.message.text == "انصراف":
-        # بازگشت به منوی اصلی
-        await update.message.reply_text(
-            "عملیات لغو شد",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
-
-async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    if update.message.photo:
-        await update.message.reply_text(
-            "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت.",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
-    else:
-        await update.message.reply_text("لطفا یک عکس از فیش پرداختی خود ارسال کنید.")
-        return States.ITALY_RESERVE_EXAM_RECEIPT
-
-
-
-
-
-
-# هندلر اپ فی (قبلاً وجود داشت؛ اکنون پیاده‌سازی شده)
-async def italy_app_fee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    با انتخاب منوی 'اپ فی' یا 'شهریه دانشگاه'، کاربر وارد این تابع می‌شود.
-    در این مرحله، ابتدا از کاربر نام دانشگاه درخواست می‌شود.
-    """
+async def goto_italy_app_fee_uni(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا نام دانشگاه درخواستی را وارد کنید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_APP_FEE_UNI
 
-# مراحل بعدی اپ فی: گرفتن اطلاعات مختلف
-async def italy_app_fee_university(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله وارد کردن نام دانشگاه
-    """
+async def italy_app_fee_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        # بازگشت به منوی اصلی Italy
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=italy_main_menu_keyboard()
-        )
-        return States.ITALY_MAIN_MENU
+        return await goto_italy(update)
 
-    # ذخیره نام دانشگاه
     context.user_data["app_fee_university"] = text
+    return await goto_italy_app_fee_degree(update)
+    
 
-    # مرحله بعد
+
+async def goto_italy_app_fee_degree(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا مقطع مورد نظر و رشته‌ی درخواستی را وارد کنید:",
         reply_markup=back_button_keyboard()
@@ -1056,109 +824,95 @@ async def italy_app_fee_university(update: Update, context: ContextTypes.DEFAULT
     return States.ITALY_APP_FEE_DEGREE
 
 async def italy_app_fee_degree(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله وارد کردن مقطع و رشته
-    """
     text = update.message.text
     if text == "بازگشت":
-        # بازگشت به مرحله قبلی (وارد کردن نام دانشگاه)
-        await update.message.reply_text(
-            "کاربر گرامی لطفا نام دانشگاه درخواستی را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_UNI
+        return await goto_italy_app_fee_uni(update)
 
     context.user_data["app_fee_degree"] = text
+    return await goto_italy_app_fee_tgid(update)
+    
 
+
+async def goto_italy_app_fee_tgid(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا آیدی تلگرامی خود را جهت ارتباط‌های بعدی وارد نمایید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_APP_FEE_TGID
 
-# هندلر اپ فی - مرحله وارد کردن آیدی تلگرام
 async def italy_app_fee_tgid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله وارد کردن آیدی تلگرام
-    """
     text = update.message.text
     if text == "بازگشت":
-        # بازگشت به مرحله قبلی (مقطع و رشته)
-        await update.message.reply_text(
-            "کاربر گرامی لطفا مقطع مورد نظر و رشته‌ی درخواستی را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_DEGREE
+        return await goto_italy_app_fee_degree(update)
 
     context.user_data["id"] = text
+    return await goto_italy_app_fee_contact(update)
+    
 
+
+
+async def goto_italy_app_fee_contact(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا شماره تماس خود را جهت پیگیری‌های آتی وارد نمایید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_APP_FEE_CONTACT
 
-# هندلر اپ فی - مرحله وارد کردن شماره تماس
 async def italy_app_fee_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله وارد کردن شماره تماس
-    """
     text = update.message.text
     if text == "بازگشت":
-        # بازگشت به مرحله قبلی (آیدی تلگرام)
-        await update.message.reply_text(
-            "کاربر گرامی لطفا آیدی تلگرامی خود را جهت ارتباط‌های بعدی وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_TGID
+        return await goto_italy_app_fee_tgid(update)
 
     context.user_data["contact"] = text
+    return await goto_italy_app_fee_amount(update)
+    
+    
+
+async def goto_italy_app_fee_amount(update, message=None):
+    default_message = "لطفا مبلغ دقیق اپلیکشن فی کورس درخواستی خود را به یورو وارد کنید:"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
 
     await update.message.reply_text(
-        "لطفا مبلغ دقیق اپلیکشن فی کورس درخواستی خود را به یورو وارد کنید:",
+        show_message,
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_APP_FEE_AMOUNT
 
-# هندلر اپ فی - مرحله وارد کردن مبلغ به یورو و محاسبه ریالی
 async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله دریافت مبلغ اپ فی به یورو و محاسبه ریالی
-    """
     text = update.message.text
-    if text == "بازگشت":
-        # بازگشت به مرحله قبلی (شماره تماس)
-        await update.message.reply_text(
-            "کاربر گرامی لطفا شماره تماس خود را جهت پیگیری‌های آتی وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_CONTACT
+    error_message = "لطفا یک مقدار معتبر به یورو وارد کنید.",
 
-    try:
+    if text == "بازگشت":
+        return await goto_italy_app_fee_contact(update)
+    
+    elif text.isdigit():
         amount_eur = float(text)
         if amount_eur <= 0:
-            raise ValueError
+            return await goto_italy_app_fee_amount(update, error_message)
 
         context.user_data["app_fee_euro_amount"] = amount_eur
         euro_price, unit = await get_euro_to_toman_exchange_rate()
         context.user_data["app_fee_euro_price"] = euro_price
-        # محاسبه ریالی با نرخ ثابت 87000
         amount_rial = int(amount_eur * euro_price * 10)
         context.user_data["app_fee_rial"] = amount_rial
 
-        await update.message.reply_text(
-            f"با توجه به اطلاعات وارده، هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
-            "جهت ادامه، یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=app_fee_confirm_keyboard()
-        )
-        return States.ITALY_APP_FEE_CONFIRM
+        return await goto_italy_app_fee_confirm(update, amount_rial)
+    else:
+        return await goto_italy_app_fee_amount(update, error_message)
 
-    except ValueError:
-        await update.message.reply_text(
-            "لطفا یک مقدار معتبر به یورو وارد کنید.",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_AMOUNT
+
+async def goto_italy_app_fee_confirm(update, amount_rial):
+    await update.message.reply_text(
+        f"با توجه به اطلاعات وارده، هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
+        "جهت ادامه، یکی از گزینه‌های زیر را انتخاب کنید:",
+        reply_markup=pay_cancel_keyboard()
+    )
+    return States.ITALY_APP_FEE_CONFIRM
+
 
 # هندلر اپ فی - مرحله تأیید پرداخت یا انصراف
 async def italy_app_fee_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -1172,7 +926,7 @@ async def italy_app_fee_confirm(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text(
             f"هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
             "اگر تمایل به پرداخت دارید روی 'پرداخت' بزنید، در غیر این صورت 'انصراف':",
-            reply_markup=app_fee_confirm_keyboard()
+            reply_markup=pay_cancel_keyboard()
         )
         return States.ITALY_APP_FEE_CONFIRM
 
@@ -1196,7 +950,7 @@ async def italy_app_fee_confirm(update: Update, context: ContextTypes.DEFAULT_TY
     else:
         await update.message.reply_text(
             "گزینه نامعتبر. لطفا پرداخت یا انصراف را انتخاب کنید.",
-            reply_markup=app_fee_confirm_keyboard()
+            reply_markup=pay_cancel_keyboard()
         )
         return States.ITALY_APP_FEE_CONFIRM
 
@@ -1211,7 +965,7 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text(
             f"هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
             "اگر قصد پرداخت دارید، مبلغ را واریز و فیش را ارسال کنید یا انصراف:",
-            reply_markup=app_fee_confirm_keyboard()
+            reply_markup=pay_cancel_keyboard()
         )
         return States.ITALY_APP_FEE_CONFIRM
 
@@ -1334,15 +1088,15 @@ def cimea_confirm_keyboard() -> ReplyKeyboardMarkup:
         resize_keyboard=True,
     )
 
-async def italy_cimea_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def goto_italy_cimea(update: Update) -> int:
     await update.message.reply_text(
         "کاربر گرامی لطفا از بین گزینه های زیر نوع درخواست خود را مشخص کنید." 
         "(اگر برای دیپلم ثبت درخواست گواهی چیمه آ دارید صرفا میتوانید ثبت درخواست comparability کنید)",
         reply_markup=cimea_type_keyboard()
     )
-    return States.ITALY_CIMEA_TYPE
+    return States.ITALY_CIMEA
 
-async def italy_cimea_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def italy_cimea(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
         return await italy_main_menu(update, context)
@@ -1357,7 +1111,7 @@ async def italy_cimea_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 async def italy_cimea_speed(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await italy_cimea_payment(update, context)
+        return await goto_italy_cimea(update)
     context.user_data["cimea_speed"] = text
     
     price_map = {
@@ -1432,191 +1186,150 @@ async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE
         return States.ITALY_CIMEA_RECEIPT
 
 
-# هندلر ثبت نام دانشگاه در Italy
-async def italy_register_university(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    if update.message.text == "بازگشت":
-        return await italy_main_menu(update, context)
-
-    # درخواست نام دانشگاه از کاربر
+async def goto_italy_register_university_name(update: Update) -> int:
     await update.message.reply_text(
         "لطفا نام دانشگاه مدنظر که میخواهید پروسه Enrollment/apply را برای آن آغاز کنید وارد نمایید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_REGISTER_UNIVERSITY_NAME
 
-# هندلر دریافت نام دانشگاه
 async def italy_register_university_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        return await italy_register_university(update, context)
+        return await goto_italy(update)
     
     context.user_data["university_name"] = update.message.text
+    return await goto_italy_register_university_type(update)
+    
 
-    # نمایش گزینه‌های نوع درخواست
+
+
+async def goto_italy_register_university_type(update):
     await update.message.reply_text(
         "لطفا نوع درخواست خود را مشخص کنید:",
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard_reg_type(),
-            resize_keyboard=True,
-        )
+        reply_markup=reply_keyboard_reg_type()
     )
     return States.ITALY_REGISTER_UNIVERSITY_TYPE
 
-# هندلر انتخاب نوع درخواست
 async def italy_register_university_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا نام دانشگاه مدنظر که میخواهید پروسه Enrollment/apply را برای آن آغاز کنید وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_REGISTER_UNIVERSITY_NAME
+        return await goto_italy_register_university_name(update)
 
     context.user_data["university_type"] = get_id_by_regTypeName_control(update.message.text)
-    # درخواست نام کورس
+    return await goto_italy_register_university_course(update)
+    
+
+
+async def goto_italy_register_university_course(update):
     await update.message.reply_text(
         "لطفا نام کورس را انتخاب کنید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_REGISTER_UNIVERSITY_COURSE
 
-# هندلر انتخاب نام کورس
 async def italy_register_university_course(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا نوع درخواست خود را مشخص کنید:",
-            reply_markup=reply_keyboard_reg_type()
-        )
-        return States.ITALY_REGISTER_UNIVERSITY_TYPE
+        return await goto_italy_register_university_type(update)
+    
     context.user_data["course_name"] = update.message.text
-    # درخواست مقطع کورس
+    return await goto_italy_register_university_degree(update)
+    
+
+
+async def goto_italy_register_university_degree(update):
     await update.message.reply_text(
         "لطفا مقطع کورس خود را انتخاب کنید:",
         reply_markup=reply_keyboard_reg_course_level()
     )
     return States.ITALY_REGISTER_UNIVERSITY_DEGREE
 
-# هندلر انتخاب مقطع کورس
 async def italy_register_university_degree(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا نام کورس را انتخاب کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_REGISTER_UNIVERSITY_COURSE
+        return await goto_italy_register_university_course(update)
+    
     context.user_data["course_level"] = get_id_by_regCourseLevelName_control(update.message.text)
-    # درخواست زبان کورس
+    
+
+
+async def goto_italy_register_university_language(update):
     await update.message.reply_text(
         "لطفا زبان کورس خود را انتخاب کنید:",
         reply_markup=reply_keyboard_reg_course_lang()
     )
     return States.ITALY_REGISTER_UNIVERSITY_LANGUAGE
 
-# هندلر انتخاب زبان کورس
 async def italy_register_university_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا مقطع کورس خود را انتخاب کنید:",
-            reply_markup=ReplyKeyboardMarkup(
-                reply_keyboard_reg_course_level(),
-                resize_keyboard=True,
-            )
-        )
-        return States.ITALY_REGISTER_UNIVERSITY_DEGREE
+        return await goto_italy_register_university_degree(update)
+    
     context.user_data["course_lang"] = get_id_by_regCourseLangName_control(update.message.text)
-    # درخواست آیدی تلگرام از کاربر
+    return await goto_italy_register_university_tgid(update)
+    
+
+
+async def goto_italy_register_university_tgid(update):
     await update.message.reply_text(
         "لطفا آیدی تلگرامی خود را وارد نمایید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_REGISTER_UNIVERSITY_TGID
 
-# هندلر دریافت آیدی تلگرام
 async def italy_register_university_tgid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا زبان کورس خود را انتخاب کنید:",
-            reply_markup=reply_keyboard_reg_course_lang()
-        )
-        return States.ITALY_REGISTER_UNIVERSITY_LANGUAGE
+        return await goto_italy_register_university_language(update)
+    
     context.user_data["id"] = update.message.text
-    # درخواست شماره تماس از کاربر
+    return await goto_italy_register_university_contact(update)
+    
+
+
+async def goto_italy_register_university_contact(update):
     await update.message.reply_text(
         "لطفا شماره تماس خود را وارد کنید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_REGISTER_UNIVERSITY_CONTACT
 
-# هندلر دریافت شماره تماس
 async def italy_register_university_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا آیدی تلگرامی خود را وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_REGISTER_UNIVERSITY_TGID
+        return await goto_italy_register_university_tgid(update)
 
     context.user_data["contact"] = update.message.text
-
     reg_uni_control(update, context)
 
-    # نمایش پیام نهایی و بازگشت به منوی اصلی
-    await update.message.reply_text(
-        "ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت.",
-        reply_markup=main_menu_keyboard()
-    )
-    return States.MAIN_MENU
+    Message = "ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت."
+    return await goto_main_menu(update, context, Message)
 
 
 
 
-# هندلر رزرو هتل و هواپیما در Italy
-async def italy_reserve_hotel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # چک کردن بازگشت
-    if update.message.text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا یکی از گزینه‌های زیر را انتخاب کنید:",
-            reply_markup=italy_main_menu_keyboard()
-        )
-        return States.ITALY_MAIN_MENU
-    
-    # درخواست آیدی تلگرام از کاربر
+
+async def goto_italy_reserve_hotel_id(update: Update) -> int:
     await update.message.reply_text(
         "کاربر گرامی لطفا آیدی تلگرامی خود را جهت ارتباط ادمین های پرداختی وارد نمایید:",
-        reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("بازگشت")]
-            ],
-            resize_keyboard=True,
-        )
+        reply_markup=back_button_keyboard()
     )
-    return States.ITALY_RESERVE_HOTEL_TGID
+    return States.ITALY_RESERVE_HOTEL_ID
 
-# هندلر آیدی تلگرام برای رزرو هتل و هواپیما
-async def italy_reserve_hotel_tgid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def italy_reserve_hotel_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        return await italy_reserve_hotel(update, context)
+        return await goto_italy(update)
 
     context.user_data["id"] = update.message.text
-    # درخواست شماره تماس از کاربر
+    return await goto_italy_reserve_hotel_contact(update)
+    
+
+
+async def goto_italy_reserve_hotel_contact(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا شماره تماس خود را جهت پیگیری های آتی برای سفارش خود وارد کنید:",
-        reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("بازگشت")]
-            ],
-            resize_keyboard=True,
-        )
+        reply_markup=back_button_keyboard()
     )
     return States.ITALY_RESERVE_HOTEL_CONTACT
 
-# هندلر شماره تماس برای رزرو هتل و هواپیما
 async def italy_reserve_hotel_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.text == "بازگشت":
-        return await italy_reserve_hotel_tgid(update, context)
+        return await goto_italy_reserve_hotel_id(update, context)
 
     context.user_data["contact"] = update.message.text
-    # نمایش پیام نهایی و بازگشت به منوی اصلی
-    await update.message.reply_text(
-        "ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت.",
-        reply_markup=main_menu_keyboard()
-    )
-    return States.MAIN_MENU
+    message = "ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت."
+    return await goto_main_menu(update, context, message)
