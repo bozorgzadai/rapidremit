@@ -22,14 +22,6 @@ from handlers import (
     italy_reserve_exam,
     italy_reserve_exam_tolc,
     handle_iolc_x_selection,
-    italy_cimea_payment,
-    italy_app_fee,
-    italy_reserve_hotel,
-    italy_register_university,
-    takmil_order_number,
-    takmil_amount,
-    takmil_receipt,
-    cancel,
     reserve_tormagata,
     reserve_tormagata_id,
     reserve_tormagata_contact,
@@ -48,15 +40,7 @@ from handlers import (
     italy_app_fee_confirm,
     italy_app_fee_receipt,
     others_id,
-    handle_cisia_account_no,
-    cisia_account_yes,
     
-    # توابع جدید برای روز آزمون، آیدی تلگرام، شماره تلفن، پرداخت
-    handle_exam_date,
-    handle_telegram_id,
-    handle_phone_number,
-    handle_payment,
-
     italy_reserve_hotel_id,
     italy_reserve_hotel_contact,
 
@@ -70,11 +54,8 @@ from handlers import (
     italy_register_university_contact,
     italy_cimea_receive_tg_id,
     italy_cimea_receive_phone,
-    cisia_account_yes_pass2,
-    cisia_account_yes_pass,
 
     goto_main_menu,
-    WAITING_FOR_PAYMENTa_account,
     get_cisia_username,
     get_cisia_pass,
     get_exam_date,
@@ -82,6 +63,7 @@ from handlers import (
     get_phone,
     confirm_payment,
     payment,
+    have_cisia_account,
 )
 
 def main():
@@ -187,9 +169,9 @@ def main():
             ],
 
             # اپ فی
-            States.ITALY_APP_FEE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee)
-            ],
+            # States.ITALY_APP_FEE: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee)
+            # ],
             States.ITALY_APP_FEE_UNI: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee_uni),
             ],
@@ -214,9 +196,9 @@ def main():
             ],
 
             # رزرو هتل و هواپیما
-            States.ITALY_RESERVE_HOTEL: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel)
-            ],
+            # States.ITALY_RESERVE_HOTEL: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel)
+            # ],
             States.ITALY_RESERVE_HOTEL_ID: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel_id)
             ],
@@ -232,9 +214,9 @@ def main():
             ],
 
             # ثبت‌نام دانشگاه
-            States.ITALY_REGISTER_UNIVERSITY: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university)
-            ],
+            # States.ITALY_REGISTER_UNIVERSITY: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university)
+            # ],
             States.ITALY_REGISTER_UNIVERSITY_NAME: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university_name)
             ],
@@ -269,51 +251,51 @@ def main():
             ],
 
             # تکمیل سفارشات قبلی
-            States.TAKMIL_ORDER_NUMBER: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_order_number)
-            ],
-            States.TAKMIL_AMOUNT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_amount)
-            ],
-            States.TAKMIL_RECEIPT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_receipt)
-            ],
+            # States.TAKMIL_ORDER_NUMBER: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_order_number)
+            # ],
+            # States.TAKMIL_AMOUNT: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_amount)
+            # ],
+            # States.TAKMIL_RECEIPT: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_receipt)
+            # ],
 
-            States.ITALY_RESERVE_EXAM_TOLC_PASS2: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass2)
-            ],
-            States.ITALY_RESERVE_EXAM_TOLC_PASS: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass)
-            ],
+            # States.ITALY_RESERVE_EXAM_TOLC_PASS2: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass2)
+            # ],
+            # States.ITALY_RESERVE_EXAM_TOLC_PASS: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass)
+            # ],
 
             # انتظار فیش پرداخت (مثل آزمون تورموگاتا)
             States.WAITING_FOR_PAYMENT: [
                 MessageHandler(filters.PHOTO & ~filters.COMMAND, handle_payment_receipt),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment_receipt),
             ],
-            States.ITALY_RESERVE_EXAM_CISIA_ACCOUNT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_cisia_account_no),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes),
-            ],
-            States.ITALY_RESERVE_EXAM_DATE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_exam_date)
-            ],
-            States.ITALY_RESERVE_EXAM_TGID: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_telegram_id)
-            ],
-            States.ITALY_RESERVE_EXAM_PHONE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_phone_number)
-            ],
-            States.ITALY_RESERVE_EXAM_PAYMENT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment)
-            ],
+            # States.ITALY_RESERVE_EXAM_CISIA_ACCOUNT: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_cisia_account_no),
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes),
+            # ],
+            # States.ITALY_RESERVE_EXAM_DATE: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_exam_date)
+            # ],
+            # States.ITALY_RESERVE_EXAM_TGID: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_telegram_id)
+            # ],
+            # States.ITALY_RESERVE_EXAM_PHONE: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_phone_number)
+            # ],
+            # States.ITALY_RESERVE_EXAM_PAYMENT: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment)
+            # ],
             States.ITALY_RESERVE_EXAM_RECEIPT: [
                 MessageHandler(filters.PHOTO & ~filters.COMMAND, handle_payment_receipt),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment_receipt)
             ]
 
         },
-        fallbacks=[CommandHandler('cancel', cancel)],
+        fallbacks=[CommandHandler('cancel', goto_main_menu)],
         allow_reentry=True
     )
 

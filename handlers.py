@@ -198,6 +198,38 @@ def enseraf_menu() -> ReplyKeyboardMarkup:
     )
 
 
+def cimea_type_keyboard() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        [
+            [KeyboardButton("comparability+verification")],
+            [KeyboardButton("comparability")],
+            [KeyboardButton("بازگشت")]
+        ],
+        resize_keyboard=True,
+    )
+
+def cimea_speed_keyboard() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        [
+            [KeyboardButton("فوری"), KeyboardButton("عادی")],
+            [KeyboardButton("بازگشت")]
+        ],
+        resize_keyboard=True,
+    )
+
+def yes_no_keyboard():
+    return ReplyKeyboardMarkup(
+            [
+                [KeyboardButton("بله"), KeyboardButton("خیر")],
+                [KeyboardButton("بازگشت")]
+            ],
+            resize_keyboard=True,
+        )
+
+
+
+
+
 async def goto_main_menu(update, context, message=None):
     default_message = "خوش آمدید! یک گزینه را انتخاب کنید:"
 
@@ -411,10 +443,10 @@ async def italy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return await goto_italy_cimea(update)
     elif text == "اپ فی":
         context.user_data["is_app_fee"] = True
-        return await goto_italy_app_fee_uni(update, context)
+        return await goto_italy_app_fee_uni(update)
     elif text == "شهریه دانشگاه":
         context.user_data["is_app_fee"] = False
-        return await goto_italy_app_fee_uni(update, context)
+        return await goto_italy_app_fee_uni(update)
     elif text == "رزرو هتل و هواپیما":
         return await goto_italy_reserve_hotel_id(update, context)
     elif text == "ثبت نام دانشگاه":
@@ -422,6 +454,7 @@ async def italy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_italy(update, message)
+
 
 
 async def goto_italy_reserve_exam(update, message=None):
@@ -447,11 +480,12 @@ async def italy_reserve_exam(update: Update, context: ContextTypes.DEFAULT_TYPE)
     elif text == "داروسازی تورورگاتا":
         return await goto_reserve_tormagata_id(update)
     elif text in ["IMAT","TIL", "ARCHED"]:
-        message = "اطلاعات آزمون درخواستی یافت نشد لطفا جهت اطلاعات بیشتر با پشتیبانی Rapid Remit به نشانی زیر ارتباط بگیرید \n @Rapidremit_support\n",
+        message = "اطلاعات آزمون درخواستی یافت نشد لطفا جهت اطلاعات بیشتر با پشتیبانی Rapid Remit به نشانی زیر ارتباط بگیرید \n @Rapidremit_support\n"
         return await goto_main_menu(update, context, message)
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_italy_reserve_exam(update, message)
+
 
 
 async def goto_reserve_tormagata_id(update):
@@ -613,13 +647,7 @@ async def goto_have_cisia_account(update, message=None):
 
     await update.message.reply_text(
         show_message,
-        reply_markup=ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("بله"), KeyboardButton("خیر")],
-                [KeyboardButton("بازگشت")]
-            ],
-            resize_keyboard=True,
-        )
+        reply_markup= yes_no_keyboard()
     )
     return States.HAVE_CISIA_ACCOUNT
 
@@ -883,8 +911,8 @@ async def goto_italy_app_fee_amount(update, message=None):
     return States.ITALY_APP_FEE_AMOUNT
 
 async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    error_message = "لطفا یک مقدار معتبر به یورو وارد کنید."
     text = update.message.text
-    error_message = "لطفا یک مقدار معتبر به یورو وارد کنید.",
 
     if text == "بازگشت":
         return await goto_italy_app_fee_contact(update)
@@ -900,193 +928,91 @@ async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYP
         amount_rial = int(amount_eur * euro_price * 10)
         context.user_data["app_fee_rial"] = amount_rial
 
-        return await goto_italy_app_fee_confirm(update, amount_rial)
+        return await goto_italy_app_fee_confirm(update, context)
     else:
         return await goto_italy_app_fee_amount(update, error_message)
 
 
-async def goto_italy_app_fee_confirm(update, amount_rial):
+
+async def goto_italy_app_fee_confirm(update, context, message=None):
+    amount_rial = context.user_data["app_fee_rial"]
+    default_message = f"""
+                        با توجه به اطلاعات وارده، هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n
+                            جهت ادامه، یکی از گزینه‌های زیر را انتخاب کنید:
+                        """
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-        f"با توجه به اطلاعات وارده، هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
-        "جهت ادامه، یکی از گزینه‌های زیر را انتخاب کنید:",
+        show_message,
         reply_markup=pay_cancel_keyboard()
     )
     return States.ITALY_APP_FEE_CONFIRM
 
-
-# هندلر اپ فی - مرحله تأیید پرداخت یا انصراف
 async def italy_app_fee_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله نمایش مبلغ ریالی و دریافت تصمیم کاربر (پرداخت / انصراف)
-    """
     text = update.message.text
+    amount_rial = context.user_data["app_fee_rial"]
+
     if text == "بازگشت":
-        # بازگشت به مرحله وارد کردن مبلغ
-        amount_rial = context.user_data.get("app_fee_rial")
-        await update.message.reply_text(
-            f"هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
-            "اگر تمایل به پرداخت دارید روی 'پرداخت' بزنید، در غیر این صورت 'انصراف':",
-            reply_markup=pay_cancel_keyboard()
-        )
-        return States.ITALY_APP_FEE_CONFIRM
+        return await goto_italy_app_fee_amount(update)
 
     elif text == "پرداخت":
-        amount_rial = context.user_data.get("app_fee_rial", 0)
-        card_number = "9876-5432-1098-7654"  # شماره کارت دلخواه
-        await update.message.reply_text(
-            f"لطفا جهت پرداخت هزینه {amount_rial} ریال، مبلغ مذکور را به شماره کارت {card_number} واریز نمایید.\n"
-            "سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید).",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_RECEIPT
+        return await goto_italy_app_fee_receipt(update, context)
 
     elif text == "انصراف":
-        await update.message.reply_text(
-            "عملیات اپ فی لغو شد. برای بازگشت به منوی اصلی، /start را بزنید یا از منو انتخاب کنید.",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        return await goto_main_menu(update, context)
 
     else:
-        await update.message.reply_text(
-            "گزینه نامعتبر. لطفا پرداخت یا انصراف را انتخاب کنید.",
-            reply_markup=pay_cancel_keyboard()
-        )
-        return States.ITALY_APP_FEE_CONFIRM
+        message = "گزینه نامعتبر. لطفا بازگشت، پرداخت یا انصراف را انتخاب کنید."
+        return await goto_italy_app_fee_confirm(update, amount_rial, message)
 
-# هندلر اپ فی - مرحله دریافت فیش پرداخت
+
+
+
+async def goto_italy_app_fee_receipt(update, context, message=None):
+    card_number = "9876-5432-1098-7654"
+    amount_rial = context.user_data["app_fee_rial"]
+
+    default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} ریال، مبلغ مذکور را به شماره کارت {card_number} واریز نمایید.\n
+        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
+    await update.message.reply_text(
+        show_message,
+        reply_markup=back_button_keyboard()
+    )
+    return States.ITALY_APP_FEE_RECEIPT
+
 async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """
-    مرحله دریافت فیش پرداخت برای اپ فی
-    """
     if update.message.text == "بازگشت":
-        # بازگشت به مرحله تایید پرداخت
-        amount_rial = context.user_data.get("app_fee_rial", 0)
-        await update.message.reply_text(
-            f"هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n"
-            "اگر قصد پرداخت دارید، مبلغ را واریز و فیش را ارسال کنید یا انصراف:",
-            reply_markup=pay_cancel_keyboard()
-        )
-        return States.ITALY_APP_FEE_CONFIRM
+        return await goto_italy_app_fee_confirm(update, context, message=None)
 
-    if update.message.photo:
+    elif update.message.photo:
         save_directory = "saved_photo/app_and_tuition_fee"
         file_path = await save_transaction_photo(update, context, save_directory)
         context.user_data["app_fee_trans_filepath"] = file_path
-
 
         if context.user_data["is_app_fee"]:
             app_fee_control(update, context)
         else:
             tuition_fee_control(update, context)
 
-
-        # در صورت دریافت عکس
-        await update.message.reply_text(
-            "کاربر گرامی، درخواست شما با موفقیت ثبت شد. "
-            "ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت.",
-            reply_markup=main_menu_keyboard()
-        )
-
-        return States.MAIN_MENU
+        message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. 
+            ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
+        return await goto_main_menu(update, context, message)
     else:
-        await update.message.reply_text(
-            "لطفا یک عکس از فیش پرداختی خود ارسال کنید.",
-            reply_markup=back_button_keyboard()
-        )
-        return States.ITALY_APP_FEE_RECEIPT
+        message = "لطفا یک عکس از فیش پرداختی خود ارسال کنید."
+        return await goto_italy_app_fee_receipt(update, context, message)
 
 
 
-# هندلر تکمیل سفارشات قبلی - دریافت شماره سفارش
-async def takmil_order_number(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "Welcome! Choose an option:",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
-    # ذخیره شماره سفارش
-    context.user_data["takmil_order_number"] = text
-    await update.message.reply_text(
-        "لطفا مبلغ قابل پرداخت برای سفارش خود را به ریال وارد نمایید:",
-        reply_markup=back_button_keyboard()
-    )
-    return States.TAKMIL_AMOUNT
 
-# هندلر تکمیل سفارشات قبلی - دریافت مبلغ
-async def takmil_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا شماره سفارشی را که از ادمین های پرداختی دریافت کرده اید را وارد کنید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TAKMIL_ORDER_NUMBER
-    if text.isdigit():
-        amount = text
-        context.user_data["takmil_amount"] = amount
-        card_number = "XXXX-XXXX-XXXX-1234"  # جایگزین با شماره کارت واقعی
-        await update.message.reply_text(
-            f"مبلغ قابل پرداخت {amount} ریال می‌باشد. اگر صحیح است، لطفاً رسید واریزی خود را به شماره کارت {card_number} در ربات ارسال نمایید.",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TAKMIL_RECEIPT
-    else:
-        await update.message.reply_text(
-            "لطفا یک عدد معتبر وارد کنید.",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TAKMIL_AMOUNT
-
-# هندلر تکمیل سفارشات قبلی - دریافت رسید واریزی
-async def takmil_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        await update.message.reply_text(
-            "لطفا مبلغ قابل پرداخت برای سفارش خود را به ریال وارد نمایید:",
-            reply_markup=back_button_keyboard()
-        )
-        return States.TAKMIL_AMOUNT
-    context.user_data["takmil_receipt"] = text
-    # پردازش داده‌ها یا ارسال به ادمین
-    await update.message.reply_text(
-        "رسید واریزی شما دریافت شد. ادمین‌های ما در سریع‌ترین حالت با شما تماس خواهند گرفت.",
-        reply_markup=main_menu_keyboard()
-    )
-    return States.MAIN_MENU
-
-# هندلر لغو عملیات (اختیاری)
-async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE, message="test") -> int:
-    print(message)
-    await update.message.reply_text(
-        "عملیات لغو شد. برای شروع مجدد /start را بزنید.",
-        reply_markup=ReplyKeyboardMarkup(
-            [["/start"]], resize_keyboard=True
-        )
-    )
-    return ConversationHandler.END
-
-
-
-def cimea_type_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        [[KeyboardButton("comparability+verification")], [KeyboardButton("comparability")], [KeyboardButton("بازگشت")]],
-        resize_keyboard=True,
-    )
-
-def cimea_speed_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        [[KeyboardButton("فوری")], [KeyboardButton("عادی")], [KeyboardButton("بازگشت")]],
-        resize_keyboard=True,
-    )
-
-def cimea_confirm_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        [[KeyboardButton("پرداخت")], [KeyboardButton("انصراف")]],
-        resize_keyboard=True,
-    )
 
 async def goto_italy_cimea(update: Update) -> int:
     await update.message.reply_text(
@@ -1099,8 +1025,15 @@ async def goto_italy_cimea(update: Update) -> int:
 async def italy_cimea(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await italy_main_menu(update, context)
+        return await goto_italy(update)
+    
     context.user_data["cimea_type"] = text
+    return await goto_italy_cimea_speed(update)
+
+    
+
+
+async def goto_italy_cimea_speed(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا از بین گزینه های زیر نوع درخواست خود را مشخص کنید."
         "(درخواست عادی در بازه زمانی دوماهه و درخواست فوری در بازه زمانی یک ماهه قابل بررسی است)",
@@ -1112,63 +1045,99 @@ async def italy_cimea_speed(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     text = update.message.text
     if text == "بازگشت":
         return await goto_italy_cimea(update)
-    context.user_data["cimea_speed"] = text
     
+    context.user_data["cimea_speed"] = text
     price_map = {
-        ("comparability+verification", "فوری"): 15000000,
-        ("comparability+verification", "عادی"): 12000000,
-        ("comparability", "فوری"): 10000000,
-        ("comparability", "عادی"): 8000000,
+        ("comparability+verification", "فوری"): 10,
+        ("comparability+verification", "عادی"): 10,
+        ("comparability", "فوری"): 10,
+        ("comparability", "عادی"): 10,
     }
     price = price_map.get((context.user_data["cimea_type"], text), 0)
     context.user_data["cimea_price"] = price
+    return await goto_italy_cimea_confirm(update, context)
     
+    
+
+
+async def goto_italy_cimea_confirm(update, context, message=None):
+    price = context.user_data["cimea_price"]
+    default_message = f"با توجه به اطلاعات وارده هزینه درخواست جاری {price} ریال می‌باشد. آیا مایل به ادامه ی درخواست خود هستید؟"
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-        f"با توجه به اطلاعات وارده هزینه درخواست جاری {price} ریال می‌باشد. آیا مایل به ادامه ی درخواست خود هستید؟",
-        reply_markup=cimea_confirm_keyboard()
+        show_message,
+        reply_markup=pay_cancel_keyboard()
     )
     return States.ITALY_CIMEA_CONFIRM
 
+
 async def italy_cimea_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
-    if text == "انصراف":
-        return await italy_main_menu(update, context)
+    if text == "بازگشت":
+        return await goto_italy_cimea_speed(update)
+    elif text == "انصراف":
+        return await goto_main_menu(update, context)
     elif text == "پرداخت":
-        price = context.user_data["cimea_price"]
-        await update.message.reply_text(
-            f"لطفا جهت پرداخت درخواست جاری به مبلغ {price} ریال و تکمیل سفارش خود هزینه مذکور را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید."
-        )
-        return States.ITALY_CIMEA_RECEIPT_ID
-    
-# هندلر دریافت آیدی تلگرام بعد از تایید درخواست
+        return await goto_italy_cimea_receive_tg_id(update)
+    else:
+        message = "لطفا از بین گزینه‌های موجود یک مورد را انتخاب کنید"
+        return await goto_italy_cimea_confirm(update, context, message)
+
+
+
+
+async def goto_italy_cimea_receive_tg_id(update):
+    await update.message.reply_text(
+        "لطفا آیدی تلگرام خود را وارد کنید.",
+        reply_markup=back_button_keyboard()
+    )
+    return States.ITALY_CIMEA_RECEIPT_ID
+
 async def italy_cimea_receive_tg_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await italy_cimea_speed(update, context)
+        return await goto_italy_cimea_confirm(update, context)
 
-    # ذخیره آیدی تلگرام
     context.user_data["id"] = text
+    return await goto_italy_cimea_receive_phone(update)
+    
 
-    # درخواست شماره تماس از کاربر
+
+
+async def goto_italy_cimea_receive_phone(update):
     await update.message.reply_text(
         "لطفا شماره تماس خود را وارد کنید:",
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_CIMEA_RECEIPT_PHONE
 
-# هندلر دریافت شماره تماس بعد از آیدی تلگرام
 async def italy_cimea_receive_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await italy_cimea_receive_tg_id(update, context)
+        return await goto_italy_cimea_receive_tg_id(update)
 
-    # ذخیره شماره تماس
     context.user_data["contact"] = text
+    return await goto_italy_cimea_receipt(update, context)
 
-    # تایید نهایی و ارسال فیش پرداخت
-    price = context.user_data.get("cimea_price", 0)
+
+
+
+async def goto_italy_cimea_receipt(update, context, message=None):
+    price = context.user_data["cimea_price"]
+    default_message = f"لطفا جهت پرداخت درخواست جاری به مبلغ {price} ریال، هزینه مذکور را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید."
+
+    if message:
+        show_message = message
+    else:
+        show_message = default_message
+
     await update.message.reply_text(
-        f"لطفا جهت پرداخت درخواست جاری به مبلغ {price} ریال، هزینه مذکور را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید.",
+        show_message,
         reply_markup=back_button_keyboard()
     )
     return States.ITALY_CIMEA_RECEIPT
@@ -1176,14 +1145,14 @@ async def italy_cimea_receive_phone(update: Update, context: ContextTypes.DEFAUL
 
 async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
-        await update.message.reply_text(
-            "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت.",
-            reply_markup=main_menu_keyboard()
-        )
-        return States.MAIN_MENU
+        message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
+        return await goto_main_menu(update, context, message)
     else:
-        await update.message.reply_text("لطفا یک تصویر از فیش پرداختی خود ارسال کنید.")
-        return States.ITALY_CIMEA_RECEIPT
+        message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
+        return await goto_italy_cimea_receipt(update, context, message=None)
+
+
+
 
 
 async def goto_italy_register_university_name(update: Update) -> int:
