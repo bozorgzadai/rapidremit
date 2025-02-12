@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from handlers.States import States
-from handler import goto_main_menu
+from BotStates import States
+from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import (back_button_keyboard, reply_keyboard_reg_type, reply_keyboard_reg_course_level,
                              reply_keyboard_reg_course_lang)
@@ -123,4 +123,3 @@ async def italy_register_university_contact(update: Update, context: ContextType
 
     Message = "ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت."
     return await goto_main_menu(update, context, Message)
-

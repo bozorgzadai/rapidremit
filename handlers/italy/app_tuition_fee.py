@@ -1,9 +1,8 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from handlers.States import States
-from api import get_euro_to_toman_exchange_rate
-from utils import save_transaction_photo
-from handler import goto_main_menu
+from BotStates import States
+from utils import get_euro_to_toman_exchange_rate_api, save_transaction_photo
+from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import back_button_keyboard, pay_cancel_keyboard
 from controller import (app_fee_control, tuition_fee_control)
@@ -106,7 +105,7 @@ async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYP
             return await goto_italy_app_fee_amount(update, error_message)
 
         context.user_data["app_fee_euro_amount"] = amount_eur
-        euro_price, unit = await get_euro_to_toman_exchange_rate()
+        euro_price, unit = await get_euro_to_toman_exchange_rate_api()
         context.user_data["app_fee_euro_price"] = euro_price
         amount_rial = int(amount_eur * euro_price * 10)
         context.user_data["app_fee_rial"] = amount_rial

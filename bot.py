@@ -1,7 +1,11 @@
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ConversationHandler, filters
-from handlers.States import States
+from BotStates import States
+from config import TOKEN
+from handlers.main_menu import  main_menu, goto_main_menu
 from handlers.buy_euro import buy_euro_amount, buy_euro_contact, buy_euro_id
 from handlers.other_order import others_description, others_amount, others_contact, others_id
+from handlers.italy.italy_main import italy
+from handlers.italy.exam.exam_main import italy_reserve_exam
 from handlers.italy.reserve_hotel import italy_reserve_hotel_id, italy_reserve_hotel_contact
 
 from handlers.italy.cimea import (italy_cimea_receive_phone, italy_cimea_receive_tg_id, italy_cimea,
@@ -21,16 +25,6 @@ from handlers.italy.exam.tolc import (italy_reserve_exam_tolc, handle_iolc_x_sel
                                       get_cisia_pass, get_exam_date, get_id, get_phone, confirm_payment, payment)
 
 
-from handlers.italy.exam.exam_main import italy_reserve_exam
-from handlers.italy.italy_main import italy
-
-
-from config import TOKEN
-from handler import (
-    main_menu,
-    
-    goto_main_menu,
-)
 
 def main():
     print("Bot is starting...")
@@ -39,12 +33,12 @@ def main():
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', goto_main_menu)],
         states={
-            # منوی اصلی
             States.MAIN_MENU: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, main_menu)
             ],
 
-            # خرید یورو
+
+
             States.BUY_EURO_AMOUNT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, buy_euro_amount)
             ],
@@ -55,7 +49,8 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, buy_euro_id)
             ],
 
-            # سفارشات دیگر
+
+
             States.OTHERS_DESCRIPTION: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, others_description)
             ],
@@ -68,9 +63,6 @@ def main():
             States.OTHERS_ID: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, others_id)
             ],
-
-
-
 
 
 
@@ -102,11 +94,6 @@ def main():
 
 
 
-
-
-
-
-            # منوی Italy
             States.ITALY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy)
             ],
@@ -120,7 +107,8 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_iolc_x_selection)
             ],
 
-            # چیمه آ
+
+
             States.ITALY_CIMEA: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea)
             ],
@@ -130,15 +118,19 @@ def main():
             States.ITALY_CIMEA_CONFIRM: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_confirm)
             ],
+            States.ITALY_CIMEA_RECEIPT_ID: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_receive_tg_id)
+            ],
+            States.ITALY_CIMEA_RECEIPT_PHONE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_receive_phone)
+            ],
             States.ITALY_CIMEA_RECEIPT: [
                 MessageHandler(filters.PHOTO & ~filters.COMMAND, italy_cimea_receipt),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_receipt),
             ],
 
-            # اپ فی
-            # States.ITALY_APP_FEE: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee)
-            # ],
+
+
             States.ITALY_APP_FEE_UNI: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee_uni),
             ],
@@ -162,10 +154,8 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_app_fee_receipt),
             ],
 
-            # رزرو هتل و هواپیما
-            # States.ITALY_RESERVE_HOTEL: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel)
-            # ],
+
+
             States.ITALY_RESERVE_HOTEL_ID: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel_id)
             ],
@@ -173,17 +163,8 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_reserve_hotel_contact)
             ],
 
-            States.ITALY_CIMEA_RECEIPT_ID: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_receive_tg_id)
-            ],
-            States.ITALY_CIMEA_RECEIPT_PHONE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, italy_cimea_receive_phone)
-            ],
+            
 
-            # ثبت‌نام دانشگاه
-            # States.ITALY_REGISTER_UNIVERSITY: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university)
-            # ],
             States.ITALY_REGISTER_UNIVERSITY_NAME: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university_name)
             ],
@@ -206,7 +187,8 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university_contact)
             ],
 
-            # تورورگاتا
+
+
             States.torvergata: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_torvergata)
             ],
@@ -216,50 +198,10 @@ def main():
             States.torvergata_CONTACT : [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_torvergata_contact)
             ],
-
-            # تکمیل سفارشات قبلی
-            # States.TAKMIL_ORDER_NUMBER: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_order_number)
-            # ],
-            # States.TAKMIL_AMOUNT: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_amount)
-            # ],
-            # States.TAKMIL_RECEIPT: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, takmil_receipt)
-            # ],
-
-            # States.ITALY_RESERVE_EXAM_TOLC_PASS2: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass2)
-            # ],
-            # States.ITALY_RESERVE_EXAM_TOLC_PASS: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass)
-            # ],
-
-            # انتظار فیش پرداخت (مثل آزمون تورورگاتا)
             States.WAITING_FOR_PAYMENT: [
                 MessageHandler(filters.PHOTO & ~filters.COMMAND, handle_payment_receipt),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment_receipt),
             ],
-            # States.ITALY_RESERVE_EXAM_CISIA_ACCOUNT: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_cisia_account_no),
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes),
-            # ],
-            # States.ITALY_RESERVE_EXAM_DATE: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_exam_date)
-            # ],
-            # States.ITALY_RESERVE_EXAM_TGID: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_telegram_id)
-            # ],
-            # States.ITALY_RESERVE_EXAM_PHONE: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_phone_number)
-            # ],
-            # States.ITALY_RESERVE_EXAM_PAYMENT: [
-            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment)
-            # ],
-            States.ITALY_RESERVE_EXAM_RECEIPT: [
-                MessageHandler(filters.PHOTO & ~filters.COMMAND, handle_payment_receipt),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment_receipt)
-            ]
 
         },
         fallbacks=[CommandHandler('cancel', goto_main_menu)],
@@ -278,8 +220,8 @@ def main():
                 )
 
     application.add_error_handler(error_handler)
-
     application.run_polling()
+
 
 if __name__ == '__main__':
     main()

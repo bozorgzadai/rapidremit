@@ -1,6 +1,35 @@
 
 import os
 import time
+import aiohttp
+
+
+# Asynchronous function to get the Euro to Iranian Toman exchange rate from the URL
+async def get_euro_to_toman_exchange_rate_api(url="https://brsapi.ir/FreeTsetmcBourseApi/Api_Free_Gold_Currency.json"):
+    try:
+        # Use aiohttp to send an asynchronous GET request
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                # Check if the request was successful (status code 200)
+                if response.status == 200:
+                    # Parse the JSON data
+                    data = await response.json()
+                    
+                    # Iterate over the 'currency' list to find the Euro exchange rate
+                    for currency in data.get("currency", []):
+                        if currency.get("name") == "یورو":
+                            return currency.get("price"), currency.get("unit")
+                
+                else:
+                    print(f"Failed to fetch data. Status code: {response.status}")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+    return None, None
+
+
+
 
 async def save_transaction_photo(update, context, save_directory):
     # Get the largest version of the photo (last item in the list)

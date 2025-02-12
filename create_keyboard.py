@@ -3,7 +3,8 @@ from model import (get_reg_type, get_reg_course_level, get_reg_course_lang, get_
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 max_col = 2
 
-def create_keyboard(result):
+
+def dynamic_create_keyboard(result):
     btns = []
     temp_group = []
     key = list(result[0].keys())[-1]
@@ -20,6 +21,46 @@ def create_keyboard(result):
         btns,
         resize_keyboard=True,
     )
+
+
+
+def reply_keyboard_reg_type():
+    result = get_reg_type()
+    return dynamic_create_keyboard(result)
+    
+
+def reply_keyboard_reg_course_level():
+    result = get_reg_course_level()
+    return dynamic_create_keyboard(result)
+
+
+def reply_keyboard_reg_course_lang():
+    result = get_reg_course_lang()
+    return dynamic_create_keyboard(result)
+
+
+def reply_keyboard_tolc_exam_type():
+    result = get_tolc_exam_type()
+    return dynamic_create_keyboard(result)
+
+
+def reply_keyboard_tolc_exam_detail(tolcExamTypeId):
+    result = get_tolcExamDetailName_by_tolcExamTypeId(tolcExamTypeId)
+    return dynamic_create_keyboard(result)
+
+
+def reply_keyboard_cimea_type():
+    result = get_cimea_type()
+    return dynamic_create_keyboard(result)
+
+
+def reply_keyboard_cimea_speed():
+    result = get_cimea_speed()
+    return dynamic_create_keyboard(result)
+
+
+
+
 
 
 def back_button_keyboard() -> ReplyKeyboardMarkup:
@@ -110,38 +151,3 @@ def yes_no_keyboard():
         resize_keyboard=True,
     )
 
-
-
-def reply_keyboard_reg_type():
-    result = get_reg_type()
-    return create_keyboard(result)
-    
-
-def reply_keyboard_reg_course_level():
-    result = get_reg_course_level()
-    return create_keyboard(result)
-
-
-def reply_keyboard_reg_course_lang():
-    result = get_reg_course_lang()
-    return create_keyboard(result)
-
-
-def reply_keyboard_tolc_exam_type():
-    result = get_tolc_exam_type()
-    return create_keyboard(result)
-
-
-def reply_keyboard_tolc_exam_detail(tolcExamTypeId):
-    result = get_tolcExamDetailName_by_tolcExamTypeId(tolcExamTypeId)
-    return create_keyboard(result)
-
-
-def reply_keyboard_cimea_type():
-    result = get_cimea_type()
-    return create_keyboard(result)
-
-
-def reply_keyboard_cimea_speed():
-    result = get_cimea_speed()
-    return create_keyboard(result)

@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from handlers.States import States
-from handler import goto_main_menu
+from BotStates import States
+from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import reserve_exam_keyboard
 

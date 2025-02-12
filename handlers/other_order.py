@@ -1,8 +1,8 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from handlers.States import States
+from BotStates import States
 from create_keyboard import back_button_keyboard
-from handler import goto_main_menu
+from handlers.main_menu import goto_main_menu
 from controller import other_order_control
 
 

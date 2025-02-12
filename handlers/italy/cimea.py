@@ -1,8 +1,8 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from handlers.States import States
+from BotStates import States
 from utils import save_transaction_photo
-from handler import goto_main_menu
+from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import back_button_keyboard, reply_keyboard_cimea_type, reply_keyboard_cimea_speed, pay_cancel_keyboard
 from controller import (cimea_control, get_id_by_cimeaTypeName_control, get_id_by_cimeaSpeedName_control,
@@ -150,4 +150,3 @@ async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
         return await goto_italy_cimea_receipt(update, context, message)
-

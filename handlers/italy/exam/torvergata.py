@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from handlers.States import States
-from handler import goto_main_menu
+from BotStates import States
+from handlers.main_menu import goto_main_menu
 from utils import save_transaction_photo
 from handlers.italy.exam.exam_main import goto_italy_reserve_exam
 from create_keyboard import back_button_keyboard, pay_cancel_keyboard
@@ -103,4 +103,3 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
         return await goto_handle_payment_receipt(update, message)
-

@@ -63,29 +63,3 @@ class Database:
                 cursor.close()
                 connection.close()
 
-# Example usage:
-# if __name__ == "__main__":
-#     db = Database(host="localhost", user="root", password="", database="rapidremit")
-
-    # # SELECT Example
-    # select_query = "SELECT * FROM user WHERE userId = %s"
-    # select_params = (1,)
-    # results = db.select(select_query, select_params)
-    # if results:
-    #     for row in results:
-    #         print(row)
-
-    # # INSERT Example
-    # insert_query = "INSERT INTO user (userId, name) VALUES (%s, %s)"
-    # insert_params = (1, "test")
-    # db.execute(insert_query, insert_params)
-
-    # UPDATE Example
-    # update_query = "UPDATE user SET userName = %s WHERE userId = %s"
-    # update_params = ("test", 1)
-    # db.execute(update_query, update_params)
-
-#     # DELETE Example
-#     delete_query = "DELETE FROM your_table WHERE id = %s"
-#     delete_params = (1,)
-#     db.execute(delete_query, delete_params)
