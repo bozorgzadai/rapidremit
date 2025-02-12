@@ -1,5 +1,3 @@
-# main.py
-
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -7,14 +5,14 @@ from telegram.ext import (
     ConversationHandler,
     filters,
 )
+
+from handlers.States import States
+
+from handlers.buy_euro import buy_euro_amount, buy_euro_contact, buy_euro_id
+
 from config import TOKEN
-from handlers import (
-    States,
-    # start,
+from handler import (
     main_menu,
-    buy_euro_amount,
-    buy_euro_contact,
-    buy_euro_id,
     others_description,
     others_amount,
     others_contact,
@@ -88,6 +86,7 @@ def main():
             States.BUY_EURO_ID: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, buy_euro_id)
             ],
+
             # سفارشات دیگر
             States.OTHERS_DESCRIPTION: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, others_description)

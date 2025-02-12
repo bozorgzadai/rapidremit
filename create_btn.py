@@ -23,6 +23,16 @@ def create_btns(result):
             )
 
 
+def back_button_keyboard() -> ReplyKeyboardMarkup:
+    back_btn = KeyboardButton("بازگشت")
+    return ReplyKeyboardMarkup(
+        [
+            [back_btn],
+        ],
+        resize_keyboard=True,
+    )
+
+
 def reply_keyboard_reg_type():
     result = get_reg_type()
     return create_btns(result)
