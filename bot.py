@@ -17,18 +17,11 @@ from handlers.italy.register_uni import (italy_register_university_name, italy_r
 from handlers.italy.exam.torvergata import (reserve_torvergata, reserve_torvergata_id, reserve_torvergata_contact,
                                             handle_payment_receipt,)
 
-
-from handlers.italy.exam.exam_main import (
-    italy_reserve_exam,
-    italy_reserve_exam_tolc,
-    handle_iolc_x_selection,
-    
-    
-    have_cisia_account, get_cisia_username, get_cisia_pass, get_exam_date, get_id,
-                                  get_phone, confirm_payment, payment
-)
+from handlers.italy.exam.tolc import (italy_reserve_exam_tolc, handle_iolc_x_selection, have_cisia_account, get_cisia_username,
+                                      get_cisia_pass, get_exam_date, get_id, get_phone, confirm_payment, payment)
 
 
+from handlers.italy.exam.exam_main import italy_reserve_exam
 from handlers.italy.italy_main import italy
 
 
