@@ -14,6 +14,9 @@ from handlers.other_order import others_description, others_amount, others_conta
 from handlers.italy.cimea import (italy_cimea_receive_phone, italy_cimea_receive_tg_id, italy_cimea,
                                   italy_cimea_receipt, italy_cimea_confirm, italy_cimea_speed,)
 
+from handlers.italy.app_tuition_fee import (italy_app_fee_uni, italy_app_fee_degree, italy_app_fee_tgid, italy_app_fee_contact,
+                                            italy_app_fee_amount, italy_app_fee_confirm, italy_app_fee_receipt,)
+
 from handlers.italy.italy_main import (
     italy,
     italy_reserve_exam,
@@ -23,15 +26,6 @@ from handlers.italy.italy_main import (
     reserve_torvergata_id,
     reserve_torvergata_contact,
     handle_payment_receipt,
-    
-    # توابع جدید مربوط به اپ فی
-    italy_app_fee_uni,
-    italy_app_fee_degree,
-    italy_app_fee_tgid,
-    italy_app_fee_contact,
-    italy_app_fee_amount,
-    italy_app_fee_confirm,
-    italy_app_fee_receipt,
     
     italy_reserve_hotel_id,
     italy_reserve_hotel_contact,
