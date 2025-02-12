@@ -22,6 +22,16 @@ def get_tolc_exam_type():
     select_query = "SELECT * FROM tolc_exam_type"
     return  db.select(select_query)
 
+def get_cimea_type():
+    db = Database.get_database()
+    select_query = "SELECT * FROM cimea_type"
+    return  db.select(select_query)
+
+def get_cimea_speed():
+    db = Database.get_database()
+    select_query = "SELECT * FROM cimea_speed"
+    return  db.select(select_query)
+
 
 
 def get_user_by_id(user_id):
@@ -70,6 +80,24 @@ def get_tolcExamDetailName_by_tolcExamTypeId(tolcExamTypeId):
     db = Database.get_database()
     select_query = "SELECT * FROM tolc_exam_detail WHERE tolcExamTypeId = %s"
     select_params = (tolcExamTypeId,)
+    return db.select(select_query, select_params)
+
+def get_id_by_cimeaTypeName(cimeaTypeName):
+    db = Database.get_database()
+    select_query = "SELECT * FROM cimea_type WHERE cimeaTypeName = %s"
+    select_params = (cimeaTypeName,)
+    return db.select(select_query, select_params)
+
+def get_id_by_cimeaSpeedName(cimeaSpeedName):
+    db = Database.get_database()
+    select_query = "SELECT * FROM cimea_speed WHERE cimeaSpeedName = %s"
+    select_params = (cimeaSpeedName,)
+    return db.select(select_query, select_params)
+
+def get_cimeaPrice_by_cimeaTypeAndSpeedId(cimeaTypeId, cimeaSpeedId):
+    db = Database.get_database()
+    select_query = "SELECT * FROM cimea_price WHERE cimeaTypeId = %s AND cimeaSpeedId = %s"
+    select_params = (cimeaTypeId, cimeaSpeedId,)
     return db.select(select_query, select_params)
 
 
@@ -144,6 +172,14 @@ def insert_torvergata(tel_userId, trans_filepath='', finish=''):
     insert_query = """INSERT INTO torvergata(tel_userId, trans_filepath, finish)
                                     VALUES (%s, %s, %s)"""
     insert_params = (tel_userId, trans_filepath, finish)
+    db.execute(insert_query, insert_params)
+
+
+def insert_cimea(tel_userId, cimeaPriceId='', trans_filepath='', finish=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO cimea(tel_userId, cimeaPriceId, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s)"""
+    insert_params = (tel_userId, cimeaPriceId, trans_filepath, finish)
     db.execute(insert_query, insert_params)
 
 

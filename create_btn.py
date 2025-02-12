@@ -1,5 +1,5 @@
 from model import (get_reg_type, get_reg_course_level, get_reg_course_lang, get_tolc_exam_type,
-                   get_tolcExamDetailName_by_tolcExamTypeId)
+                   get_tolcExamDetailName_by_tolcExamTypeId, get_cimea_type, get_cimea_speed)
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 max_col = 2
 
@@ -45,4 +45,14 @@ def reply_keyboard_tolc_exam_type():
 
 def reply_keyboard_tolc_exam_detail(tolcExamTypeId):
     result = get_tolcExamDetailName_by_tolcExamTypeId(tolcExamTypeId)
+    return create_btns(result)
+
+
+def reply_keyboard_cimea_type():
+    result = get_cimea_type()
+    return create_btns(result)
+
+
+def reply_keyboard_cimea_speed():
+    result = get_cimea_speed()
     return create_btns(result)

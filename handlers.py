@@ -14,10 +14,12 @@ from api import get_euro_to_toman_exchange_rate
 from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
                         reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control,
-                        insert_or_update_cisia_account, tolc_order_exam_control, torvergata_control)
+                        insert_or_update_cisia_account, tolc_order_exam_control, torvergata_control, get_id_by_cimeaTypeName_control,
+                        get_id_by_cimeaSpeedName_control, get_cimeaPrice_by_cimeaTypeAndSpeedId_control, cimea_control)
 import time
 from create_btn import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
-                        reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail)
+                        reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail, reply_keyboard_cimea_type,
+                        reply_keyboard_cimea_speed)
 
 class States(Enum):
     MAIN_MENU = auto()
@@ -1024,7 +1026,7 @@ async def goto_italy_cimea(update: Update) -> int:
     await update.message.reply_text(
         "کاربر گرامی لطفا از بین گزینه های زیر نوع درخواست خود را مشخص کنید." 
         "(اگر برای دیپلم ثبت درخواست گواهی چیمه آ دارید صرفا میتوانید ثبت درخواست comparability کنید)",
-        reply_markup=cimea_type_keyboard()
+        reply_markup=reply_keyboard_cimea_type()
     )
     return States.ITALY_CIMEA
 
@@ -1033,7 +1035,7 @@ async def italy_cimea(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     if text == "بازگشت":
         return await goto_italy(update)
     
-    context.user_data["cimea_type"] = text
+    context.user_data["cimea_type_id"] = get_id_by_cimeaTypeName_control(text)
     return await goto_italy_cimea_speed(update)
 
     
@@ -1043,7 +1045,7 @@ async def goto_italy_cimea_speed(update):
     await update.message.reply_text(
         "کاربر گرامی لطفا از بین گزینه های زیر نوع درخواست خود را مشخص کنید."
         "(درخواست عادی در بازه زمانی دوماهه و درخواست فوری در بازه زمانی یک ماهه قابل بررسی است)",
-        reply_markup=cimea_speed_keyboard()
+        reply_markup=reply_keyboard_cimea_speed()
     )
     return States.ITALY_CIMEA_SPEED
 
@@ -1052,15 +1054,13 @@ async def italy_cimea_speed(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if text == "بازگشت":
         return await goto_italy_cimea(update)
     
-    context.user_data["cimea_speed"] = text
-    price_map = {
-        ("comparability+verification", "فوری"): 10,
-        ("comparability+verification", "عادی"): 10,
-        ("comparability", "فوری"): 10,
-        ("comparability", "عادی"): 10,
-    }
-    price = price_map.get((context.user_data["cimea_type"], text), 0)
-    context.user_data["cimea_price"] = price
+    context.user_data["cimea_speed_id"] = get_id_by_cimeaSpeedName_control(text)
+    cimeaTypeId = context.user_data["cimea_type_id"]
+    cimeaSpeedId = context.user_data["cimea_speed_id"]
+    cimeaPriceId, cimeaPrice = get_cimeaPrice_by_cimeaTypeAndSpeedId_control(cimeaTypeId, cimeaSpeedId)
+
+    context.user_data["cimea_price_id"] = cimeaPriceId
+    context.user_data["cimea_price"] = cimeaPrice
     return await goto_italy_cimea_confirm(update, context)
     
     
@@ -1151,11 +1151,17 @@ async def goto_italy_cimea_receipt(update, context, message=None):
 
 async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
+        save_directory = "saved_photo/cimea"
+        filename = await save_transaction_photo(update, context, save_directory)
+        context.user_data["cimea_trans_filepath"] = filename
+
+        cimea_control(update, context)
+
         message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
         return await goto_main_menu(update, context, message)
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
-        return await goto_italy_cimea_receipt(update, context, message=None)
+        return await goto_italy_cimea_receipt(update, context, message)
 
 
 

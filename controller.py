@@ -1,7 +1,8 @@
 from model import (get_user_by_id, insert_user, update_user, insert_buy_currency, insert_other_order,
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
-                   get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata)
+                   get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata, get_id_by_cimeaTypeName,
+                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea)
 
 from encrypt.password_encryption import encrypting_password
 
@@ -30,6 +31,21 @@ def get_id_by_tolcExamDetailName_control(tolcExamDetailName):
     result = get_id_by_tolcExamDetailName(tolcExamDetailName)
     key = list(result[0].keys())[0]
     return result[0][key]
+
+def get_id_by_cimeaTypeName_control(cimeaTypeName):
+    result = get_id_by_cimeaTypeName(cimeaTypeName)
+    key = list(result[0].keys())[0]
+    return result[0][key]
+
+def get_id_by_cimeaSpeedName_control(cimeaSpeedName):
+    result = get_id_by_cimeaSpeedName(cimeaSpeedName)
+    key = list(result[0].keys())[0]
+    return result[0][key]
+
+def get_cimeaPrice_by_cimeaTypeAndSpeedId_control(cimeaTypeId, cimeaSpeedId):
+    result = get_cimeaPrice_by_cimeaTypeAndSpeedId(cimeaTypeId, cimeaSpeedId)
+    keys = list(result[0].keys())
+    return result[0][keys[0]], result[0][keys[-1]]
 
     
 
@@ -97,7 +113,10 @@ def torvergata_control(update, context):
     insert_or_update_user(update, context)
     insert_torvergata(context._user_id, trans_filepath=context.user_data["torvergata_trans_filepath"], finish=0)
 
-
+def cimea_control(update, context):
+    insert_or_update_user(update, context)
+    insert_cimea(context._user_id, cimeaPriceId=context.user_data["cimea_price_id"],
+                 trans_filepath=context.user_data["cimea_trans_filepath"], finish=0)
 
 
 
