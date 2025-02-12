@@ -14,7 +14,7 @@ from api import get_euro_to_toman_exchange_rate
 from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
                         reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control,
-                        insert_or_update_cisia_account, tolc_order_exam_control)
+                        insert_or_update_cisia_account, tolc_order_exam_control, torvergata_control)
 import time
 from create_btn import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
                         reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail)
@@ -42,9 +42,9 @@ class States(Enum):
     TAKMIL_ORDER_NUMBER = auto()
     TAKMIL_AMOUNT = auto()
     TAKMIL_RECEIPT = auto()
-    TORMAGATA = auto()
-    TORMAGATA_ID = auto()
-    TORMAGATA_CONTACT = auto()
+    torvergata = auto()
+    torvergata_ID = auto()
+    torvergata_CONTACT = auto()
 
     ITALY_RESERVE_EXAM_CISIA_ACCOUNT = auto()  # بررسی اکانت CISIA
     ITALY_RESERVE_EXAM_DATE = auto()  # وارد کردن روز آزمون
@@ -113,7 +113,7 @@ async def save_transaction_photo(update, context, save_directory):
     # Download and save the photo
     await photo_file.download_to_drive(custom_path=file_path)
 
-    return file_path
+    return unique_filename
 
 
 def main_menu_keyboard() -> ReplyKeyboardMarkup:
@@ -478,7 +478,7 @@ async def italy_reserve_exam(update: Update, context: ContextTypes.DEFAULT_TYPE)
     elif text == "TOLC":
         return await goto_italy_reserve_exam_tolc(update)
     elif text == "داروسازی تورورگاتا":
-        return await goto_reserve_tormagata_id(update)
+        return await goto_reserve_torvergata_id(update)
     elif text in ["IMAT","TIL", "ARCHED"]:
         message = "اطلاعات آزمون درخواستی یافت نشد لطفا جهت اطلاعات بیشتر با پشتیبانی Rapid Remit به نشانی زیر ارتباط بگیرید \n @Rapidremit_support\n"
         return await goto_main_menu(update, context, message)
@@ -488,41 +488,41 @@ async def italy_reserve_exam(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 
-async def goto_reserve_tormagata_id(update):
+async def goto_reserve_torvergata_id(update):
     await update.message.reply_text(
         "لطفا آیدی خود را وارد نمایید",
         reply_markup=back_button_keyboard()
     )
-    return States.TORMAGATA_ID
+    return States.torvergata_ID
 
-async def reserve_tormagata_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def reserve_torvergata_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
         return await goto_italy_reserve_exam(update)
 
-    context.user_data["amount"] = text
-    return await goto_reserve_tormagata_contact(update)
+    context.user_data["id"] = text
+    return await goto_reserve_torvergata_contact(update)
     
 
 
-async def goto_reserve_tormagata_contact(update):
+async def goto_reserve_torvergata_contact(update):
     await update.message.reply_text(
         "لطفا شماره تلفن خود را جهت ارتباطات بعدی وارد کنید:",
         reply_markup=back_button_keyboard()
     )
-    return States.TORMAGATA_CONTACT
+    return States.torvergata_CONTACT
 
-async def reserve_tormagata_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def reserve_torvergata_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await goto_reserve_tormagata_id(update)
+        return await goto_reserve_torvergata_id(update)
     
     context.user_data["contact"] = text
-    return await goto_reserve_tormagata(update)
+    return await goto_reserve_torvergata(update)
 
     
 
-async def goto_reserve_tormagata(update, message=None):
+async def goto_reserve_torvergata(update, message=None):
     default_message = "داوطلب گرامی هزینه شرکت در آزمون داروسازی تورورگاتا (کورس انگلیسی داروسازی) 1000 ریال می‌باشد اگر قصد تکمیل خرید خود را دارید با استفاده از گزینه پرداخت ادامه دهید"
 
     if message:
@@ -534,19 +534,19 @@ async def goto_reserve_tormagata(update, message=None):
         show_message,
         reply_markup=pay_cancel_keyboard()
     )
-    return States.TORMAGATA
+    return States.torvergata
 
-async def reserve_tormagata(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def reserve_torvergata(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "بازگشت":
-        return await goto_reserve_tormagata_contact(update)
+        return await goto_reserve_torvergata_contact(update)
     elif text == "انصراف":
         return await goto_main_menu(update, context)
     elif text == "پرداخت":
         return await goto_handle_payment_receipt(update)
     else: 
         message = "لطفا یکی از گزینه‌های زیر را انتخاب کنید:"
-        return await goto_reserve_tormagata(update, message)
+        return await goto_reserve_torvergata(update, message)
 
 
 
@@ -566,10 +566,16 @@ async def goto_handle_payment_receipt(update, message=None):
 
 async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
+        save_directory = "saved_photo/torvergata"
+        filename = await save_transaction_photo(update, context, save_directory)
+        context.user_data["torvergata_trans_filepath"] = filename
+
+        torvergata_control(update, context)
+
         message = "کاربر گرامی، درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
         return await goto_main_menu(update, context, message)
     elif update.message.text=="بازگشت":
-        return await goto_reserve_tormagata(update)
+        return await goto_reserve_torvergata(update)
     elif update.message.text=="انصراف":
         return await goto_main_menu(update, context)
     else:
@@ -809,8 +815,8 @@ async def goto_payment(update, message=None):
 async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
         save_directory = "saved_photo/tolc_exam"
-        file_path = await save_transaction_photo(update, context, save_directory)
-        context.user_data["tolc_exam_trans_filepath"] = file_path
+        filename = await save_transaction_photo(update, context, save_directory)
+        context.user_data["tolc_exam_trans_filepath"] = filename
 
         tolc_order_exam_control(update, context)
 
@@ -995,8 +1001,8 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
 
     elif update.message.photo:
         save_directory = "saved_photo/app_and_tuition_fee"
-        file_path = await save_transaction_photo(update, context, save_directory)
-        context.user_data["app_fee_trans_filepath"] = file_path
+        filename = await save_transaction_photo(update, context, save_directory)
+        context.user_data["app_fee_trans_filepath"] = filename
 
         if context.user_data["is_app_fee"]:
             app_fee_control(update, context)

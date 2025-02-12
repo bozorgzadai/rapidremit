@@ -1,7 +1,7 @@
 from model import (get_user_by_id, insert_user, update_user, insert_buy_currency, insert_other_order,
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
-                   get_cisia_account_by_tel_userId, update_cisia_account)
+                   get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata)
 
 from encrypt.password_encryption import encrypting_password
 
@@ -92,6 +92,10 @@ def tolc_order_exam_control(update, context):
     insert_tolc_order_exam(context._user_id, tolcExamDetailId=context.user_data["tolcExamDetailId"],
                            examDate=context.user_data["told_exam_date"], trans_filePath=context.user_data["tolc_exam_trans_filepath"],
                            finish=0)
+    
+def torvergata_control(update, context):
+    insert_or_update_user(update, context)
+    insert_torvergata(context._user_id, trans_filepath=context.user_data["torvergata_trans_filepath"], finish=0)
 
 
 

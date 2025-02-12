@@ -22,9 +22,9 @@ from handlers import (
     italy_reserve_exam,
     italy_reserve_exam_tolc,
     handle_iolc_x_selection,
-    reserve_tormagata,
-    reserve_tormagata_id,
-    reserve_tormagata_contact,
+    reserve_torvergata,
+    reserve_torvergata_id,
+    reserve_torvergata_contact,
     handle_payment_receipt,
     # توابع جدید مربوط به چیمه آ
     italy_cimea,
@@ -239,15 +239,15 @@ def main():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, italy_register_university_contact)
             ],
 
-            # تورموگاتا
-            States.TORMAGATA: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_tormagata)
+            # تورورگاتا
+            States.torvergata: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_torvergata)
             ],
-            States.TORMAGATA_ID : [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_tormagata_id)
+            States.torvergata_ID : [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_torvergata_id)
             ],
-            States.TORMAGATA_CONTACT : [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_tormagata_contact)
+            States.torvergata_CONTACT : [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, reserve_torvergata_contact)
             ],
 
             # تکمیل سفارشات قبلی
@@ -268,7 +268,7 @@ def main():
             #     MessageHandler(filters.TEXT & ~filters.COMMAND, cisia_account_yes_pass)
             # ],
 
-            # انتظار فیش پرداخت (مثل آزمون تورموگاتا)
+            # انتظار فیش پرداخت (مثل آزمون تورورگاتا)
             States.WAITING_FOR_PAYMENT: [
                 MessageHandler(filters.PHOTO & ~filters.COMMAND, handle_payment_receipt),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_payment_receipt),
