@@ -21,6 +21,9 @@ from handlers.italy.register_uni import (italy_register_university_name, italy_r
                                          italy_register_university_degree, italy_register_university_language,
                                          italy_register_university_tgid, italy_register_university_contact,)
 
+from handlers.italy.reserve_hotel import italy_reserve_hotel_id, italy_reserve_hotel_contact
+
+
 from handlers.italy.italy_main import (
     italy,
     italy_reserve_exam,
@@ -31,9 +34,6 @@ from handlers.italy.italy_main import (
     reserve_torvergata_contact,
     handle_payment_receipt,
     
-    italy_reserve_hotel_id,
-    italy_reserve_hotel_contact,
-
     have_cisia_account, get_cisia_username, get_cisia_pass, get_exam_date, get_id,
                                   get_phone, confirm_payment, payment
 )
