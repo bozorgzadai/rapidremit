@@ -9,13 +9,11 @@ from telegram.ext import (
 from handlers.States import States
 
 from handlers.buy_euro import buy_euro_amount, buy_euro_contact, buy_euro_id
+from handlers.other_order import others_description, others_amount, others_contact, others_id
 
 from config import TOKEN
 from handler import (
     main_menu,
-    others_description,
-    others_amount,
-    others_contact,
     italy,
     italy_reserve_exam,
     italy_reserve_exam_tolc,
@@ -37,7 +35,6 @@ from handler import (
     italy_app_fee_amount,
     italy_app_fee_confirm,
     italy_app_fee_receipt,
-    others_id,
     
     italy_reserve_hotel_id,
     italy_reserve_hotel_contact,

@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes
 
 import os
 from api import get_euro_to_toman_exchange_rate
-from controller import (other_order_control, app_fee_control, tuition_fee_control,
+from controller import (app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
                         reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control,
                         insert_or_update_cisia_account, tolc_order_exam_control, torvergata_control, get_id_by_cimeaTypeName_control,
@@ -60,17 +60,25 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "Italy":
         return await goto_italy(update)
+    
     elif text == "خرید یورو":
         from handlers.buy_euro import goto_buy_euro
         return await goto_buy_euro(update)
+    
     elif text == "موارد دیگر":
+        from handlers.other_order import goto_others
         return await goto_others(update)
+    
     elif text == "تکمیل سفارشات قبلی":
         return await goto_complete_prev_orther(update)
+    
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_main_menu(update, context, message)
     
+
+
+
 
 
 
@@ -84,85 +92,6 @@ async def goto_complete_prev_orther(update):
 
 
 
-
-async def goto_others(update):
-    await update.message.reply_text(
-        "لطفا توضیحات سفارش خود را وارد کنید:",
-        reply_markup=back_button_keyboard()
-    )
-    return States.OTHERS_DESCRIPTION
-
-async def others_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        return await goto_main_menu(update, context)
-    
-    context.user_data["description"] = text
-    return await goto_others_amount(update)
-    
-
-
-async def goto_others_amount(update, message=None):
-    default_message = "لطفا مبلغ قابل پرداخت در سفارش را به یورو وارد کنید:"
-
-    if message:
-        show_message = message
-    else:
-        show_message = default_message
-
-    await update.message.reply_text(
-        show_message,
-        reply_markup=back_button_keyboard()
-    )
-    return States.OTHERS_AMOUNT
-
-async def others_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        return await goto_others(update)
-    if text.isdigit():
-        context.user_data["amount"] = float(text)
-        return await goto_others_contact(update)
-    else:
-        message = "لطفا یک عدد معتبر وارد کنید."
-        return await goto_others_amount(update, message)
-
-
-
-async def goto_others_contact(update):
-    await update.message.reply_text(
-        "لطفا شماره تماس خود را وارد کنید:",
-        reply_markup=back_button_keyboard()
-    )
-    return States.OTHERS_CONTACT
-
-async def others_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        return await goto_others_amount(update)
-    
-    context.user_data["contact"] = text
-    return await goto_others_id(update)
-    
-
-
-async def goto_others_id(update):
-    await update.message.reply_text(
-        "لطفا آیدی خود را وارد نمایید",
-        reply_markup=back_button_keyboard()
-    )
-    return States.OTHERS_ID
-
-async def others_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    text = update.message.text
-    if text == "بازگشت":
-        return await goto_others_contact(update)
-    
-    context.user_data["id"] = text
-    other_order_control(update, context)
-
-    message = "سفارش شما ثبت شد. ادمین به زودی با شما تماس خواهد گرفت."
-    return await goto_main_menu(update, context, message)
 
 
 
