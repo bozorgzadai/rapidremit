@@ -1216,6 +1216,7 @@ async def italy_register_university_degree(update: Update, context: ContextTypes
         return await goto_italy_register_university_course(update)
     
     context.user_data["course_level"] = get_id_by_regCourseLevelName_control(update.message.text)
+    return await goto_italy_register_university_language(update)
     
 
 
