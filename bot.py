@@ -17,6 +17,10 @@ from handlers.italy.cimea import (italy_cimea_receive_phone, italy_cimea_receive
 from handlers.italy.app_tuition_fee import (italy_app_fee_uni, italy_app_fee_degree, italy_app_fee_tgid, italy_app_fee_contact,
                                             italy_app_fee_amount, italy_app_fee_confirm, italy_app_fee_receipt,)
 
+from handlers.italy.register_uni import (italy_register_university_name, italy_register_university_type, italy_register_university_course,
+                                         italy_register_university_degree, italy_register_university_language,
+                                         italy_register_university_tgid, italy_register_university_contact,)
+
 from handlers.italy.italy_main import (
     italy,
     italy_reserve_exam,
@@ -29,15 +33,6 @@ from handlers.italy.italy_main import (
     
     italy_reserve_hotel_id,
     italy_reserve_hotel_contact,
-
-    # توابع جدید برای ثبت نام دانشگاه
-    italy_register_university_name,
-    italy_register_university_type,
-    italy_register_university_course,
-    italy_register_university_degree,
-    italy_register_university_language,
-    italy_register_university_tgid,
-    italy_register_university_contact,
 
     have_cisia_account, get_cisia_username, get_cisia_pass, get_exam_date, get_id,
                                   get_phone, confirm_payment, payment
