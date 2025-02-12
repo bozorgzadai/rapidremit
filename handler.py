@@ -1,103 +1,22 @@
-from enum import Enum, auto
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import (
-    ContextTypes,
-    CommandHandler,
-    MessageHandler,
-    ConversationHandler,
-    filters,
-)
-from config import TOKEN
+from telegram.ext import ContextTypes 
 
 import os
 from api import get_euro_to_toman_exchange_rate
-from controller import (buy_euro_control, other_order_control, app_fee_control, tuition_fee_control,
+from controller import (other_order_control, app_fee_control, tuition_fee_control,
                         get_id_by_regTypeName_control, get_id_by_regCourseLevelName_control, get_id_by_regCourseLangName_control,
                         reg_uni_control, get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control,
                         insert_or_update_cisia_account, tolc_order_exam_control, torvergata_control, get_id_by_cimeaTypeName_control,
                         get_id_by_cimeaSpeedName_control, get_cimeaPrice_by_cimeaTypeAndSpeedId_control, cimea_control)
 import time
-from create_btn import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
+from create_keyboard import (reply_keyboard_reg_type, reply_keyboard_reg_course_level, reply_keyboard_reg_course_lang,
                         reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail, reply_keyboard_cimea_type,
                         reply_keyboard_cimea_speed)
 
-from create_btn import back_button_keyboard
+from create_keyboard import (main_menu_keyboard, italy_main_menu_keyboard, reserve_exam_keyboard,
+                        back_button_keyboard, pay_cancel_keyboard, yes_no_keyboard)
 from handlers.States import States
 
-# class States(Enum):
-#     MAIN_MENU = auto()
-#     BUY_EURO_AMOUNT = auto()
-#     BUY_EURO_CONTACT = auto()
-#     BUY_EURO_ID = auto()
-#     OTHERS_DESCRIPTION = auto()
-#     OTHERS_AMOUNT = auto()
-#     OTHERS_CONTACT = auto()
-#     OTHERS_ID = auto()
-#     ITALY = auto()
-#     ITALY_RESERVE_EXAM = auto()
-#     ITALY_RESERVE_EXAM_TOLC = auto()
-#     ITALY_RESERVE_EXAM_TOLC_X = auto()
-#     ITALY_CIMEA = auto()
-#     ITALY_CIMEA_SPEED = auto()
-#     ITALY_CIMEA_CONFIRM = auto()
-#     ITALY_CIMEA_RECEIPT = auto()
-#     ITALY_APP_FEE = auto()
-#     ITALY_RESERVE_HOTEL = auto()
-#     ITALY_REGISTER_UNIVERSITY = auto()
-#     TAKMIL_ORDER_NUMBER = auto()
-#     TAKMIL_AMOUNT = auto()
-#     TAKMIL_RECEIPT = auto()
-#     torvergata = auto()
-#     torvergata_ID = auto()
-#     torvergata_CONTACT = auto()
-
-#     ITALY_RESERVE_EXAM_CISIA_ACCOUNT = auto()  # بررسی اکانت CISIA
-#     ITALY_RESERVE_EXAM_DATE = auto()  # وارد کردن روز آزمون
-#     ITALY_RESERVE_EXAM_TGID = auto()  # وارد کردن آیدی تلگرام
-#     ITALY_RESERVE_EXAM_PHONE = auto()  # وارد کردن شماره تلفن
-#     ITALY_RESERVE_EXAM_PAYMENT = auto()  # تایید پرداخت
-#     ITALY_RESERVE_EXAM_RECEIPT = auto()  # دریافت فیش پرداخت
-
-    
-#     # حالات جدید مربوط به اپ فی
-#     ITALY_APP_FEE_UNI = auto()
-#     ITALY_APP_FEE_DEGREE = auto()
-#     ITALY_APP_FEE_TGID = auto()
-#     ITALY_APP_FEE_CONTACT = auto()
-#     ITALY_APP_FEE_AMOUNT = auto()
-#     ITALY_APP_FEE_CONFIRM = auto()
-#     ITALY_APP_FEE_RECEIPT = auto()
-    
-#     # اضافه کردن حالت جدید برای مدیریت فیش پرداخت
-#     WAITING_FOR_PAYMENT = auto()
-
-#     ITALY_RESERVE_HOTEL_ID = auto()  # وارد کردن آیدی تلگرام برای رزرو هتل و هواپیما
-#     ITALY_RESERVE_HOTEL_CONTACT = auto()  # وارد کردن شماره تماس برای رزرو هتل و هواپیما
-
-#     # حالات جدید برای ثبت نام دانشگاه
-#     ITALY_REGISTER_UNIVERSITY_NAME = auto()  # وارد کردن نام دانشگاه
-#     ITALY_REGISTER_UNIVERSITY_TYPE = auto()  # انتخاب نوع درخواست (apply/enrollment)
-#     ITALY_REGISTER_UNIVERSITY_COURSE = auto()  # انتخاب نام کورس
-#     ITALY_REGISTER_UNIVERSITY_DEGREE = auto()  # انتخاب مقطع کورس
-#     ITALY_REGISTER_UNIVERSITY_LANGUAGE = auto()  # انتخاب زبان کورس
-#     ITALY_REGISTER_UNIVERSITY_TGID = auto()  # وارد کردن آیدی تلگرام
-#     ITALY_REGISTER_UNIVERSITY_CONTACT = auto()  # وارد کردن شماره تماس
-
-#     ITALY_CIMEA_RECEIPT_ID = auto()
-#     ITALY_CIMEA_RECEIPT_PHONE = auto()
-
-#     ITALY_RESERVE_EXAM_TOLC_PASS2 = auto()
-#     ITALY_RESERVE_EXAM_TOLC_PASS = auto()
-
-
-#     HAVE_CISIA_ACCOUNT = auto()
-#     GET_CISIA_USERNAME = auto()
-#     GET_CISIA_PASS = auto()
-#     GET_EXAM_DATE = auto()
-#     GET_ID = auto()
-#     GET_PHONE = auto()
-#     CONFIRM_PAYMENT = auto()
-#     PAYMENT = auto()
 
 
 async def save_transaction_photo(update, context, save_directory):
@@ -119,93 +38,6 @@ async def save_transaction_photo(update, context, save_directory):
     await photo_file.download_to_drive(custom_path=file_path)
 
     return unique_filename
-
-
-def main_menu_keyboard() -> ReplyKeyboardMarkup:
-    buy_euro_btn = KeyboardButton("خرید یورو")
-    italy_btn = KeyboardButton("Italy")
-    others_btn = KeyboardButton("موارد دیگر")
-    takmil_btn = KeyboardButton("تکمیل سفارشات قبلی")
-    return ReplyKeyboardMarkup(
-        [
-            [italy_btn],
-            [buy_euro_btn, others_btn],
-            [takmil_btn],
-        ],
-        resize_keyboard=True,
-    )
-
-
-
-def italy_main_menu_keyboard() -> ReplyKeyboardMarkup:
-    reserve_exam_btn = KeyboardButton("رزرو آزمون")
-    cimea_payment_btn = KeyboardButton("پرداخت چیمه آ(CIMEA)")
-    app_fee_btn = KeyboardButton("اپ فی")
-    uni_tui_btn = KeyboardButton("شهریه دانشگاه")
-    reserve_hotel_btn = KeyboardButton("رزرو هتل و هواپیما")
-    register_university_btn = KeyboardButton("ثبت نام دانشگاه")
-    back_btn = KeyboardButton("بازگشت")
-    return ReplyKeyboardMarkup(
-        [
-            [reserve_exam_btn],
-            [cimea_payment_btn],
-            [app_fee_btn, uni_tui_btn],
-            [register_university_btn, reserve_hotel_btn],
-            [back_btn]
-        ],
-        resize_keyboard=True,
-    )
-
-def reserve_exam_keyboard() -> ReplyKeyboardMarkup:
-    tolc_btn = KeyboardButton("TOLC")
-    imai_btn = KeyboardButton("IMAT")
-    drg_btn = KeyboardButton("داروسازی تورورگاتا")
-    til_btn = KeyboardButton("TIL")
-    arcd_btn = KeyboardButton("ARCHED")
-    back_btn = KeyboardButton("بازگشت")
-    return ReplyKeyboardMarkup(
-        [
-            [tolc_btn],
-            [imai_btn, drg_btn],
-            [til_btn, arcd_btn],
-            [back_btn]
-        ],
-        resize_keyboard=True,
-    )
-
-def pay_cancel_keyboard() -> ReplyKeyboardMarkup:
-    pay_btn = KeyboardButton("پرداخت")
-    cancel_btn = KeyboardButton("انصراف")
-    back_btn = KeyboardButton("بازگشت")
-    return ReplyKeyboardMarkup(
-        [
-            [pay_btn, cancel_btn],
-            [back_btn],
-        ],
-        resize_keyboard=True,
-    )
-
-def enseraf_menu() -> ReplyKeyboardMarkup:
-    cancel_btn = KeyboardButton("انصراف")
-    back_btn = KeyboardButton("بازگشت")
-    return ReplyKeyboardMarkup(
-        [
-            [back_btn, cancel_btn],
-        ],
-        resize_keyboard=True,
-    )
-
-
-def yes_no_keyboard():
-    return ReplyKeyboardMarkup(
-            [
-                [KeyboardButton("بله"), KeyboardButton("خیر")],
-                [KeyboardButton("بازگشت")]
-            ],
-            resize_keyboard=True,
-        )
-
-
 
 
 
@@ -477,7 +309,7 @@ async def goto_handle_payment_receipt(update, message=None):
 
     await update.message.reply_text(
         show_message,
-        reply_markup=enseraf_menu()
+        reply_markup=back_button_keyboard()
     )
     return States.WAITING_FOR_PAYMENT
 
@@ -493,8 +325,6 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
         return await goto_main_menu(update, context, message)
     elif update.message.text=="بازگشت":
         return await goto_reserve_torvergata(update)
-    elif update.message.text=="انصراف":
-        return await goto_main_menu(update, context)
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
         return await goto_handle_payment_receipt(update, message)
