@@ -1,15 +1,8 @@
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    ConversationHandler,
-    filters,
-)
-
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ConversationHandler, filters
 from handlers.States import States
-
 from handlers.buy_euro import buy_euro_amount, buy_euro_contact, buy_euro_id
 from handlers.other_order import others_description, others_amount, others_contact, others_id
+from handlers.italy.reserve_hotel import italy_reserve_hotel_id, italy_reserve_hotel_contact
 
 from handlers.italy.cimea import (italy_cimea_receive_phone, italy_cimea_receive_tg_id, italy_cimea,
                                   italy_cimea_receipt, italy_cimea_confirm, italy_cimea_speed,)
@@ -21,22 +14,22 @@ from handlers.italy.register_uni import (italy_register_university_name, italy_r
                                          italy_register_university_degree, italy_register_university_language,
                                          italy_register_university_tgid, italy_register_university_contact,)
 
-from handlers.italy.reserve_hotel import italy_reserve_hotel_id, italy_reserve_hotel_contact
+from handlers.italy.exam.torvergata import (reserve_torvergata, reserve_torvergata_id, reserve_torvergata_contact,
+                                            handle_payment_receipt,)
 
 
-from handlers.italy.italy_main import (
-    italy,
+from handlers.italy.exam.exam_main import (
     italy_reserve_exam,
     italy_reserve_exam_tolc,
     handle_iolc_x_selection,
-    reserve_torvergata,
-    reserve_torvergata_id,
-    reserve_torvergata_contact,
-    handle_payment_receipt,
+    
     
     have_cisia_account, get_cisia_username, get_cisia_pass, get_exam_date, get_id,
                                   get_phone, confirm_payment, payment
 )
+
+
+from handlers.italy.italy_main import italy
 
 
 from config import TOKEN
