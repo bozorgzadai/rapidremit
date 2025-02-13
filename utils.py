@@ -13,6 +13,23 @@ async def terminate_handler(update, context):
 
 
 
+def remove_lines_by_index(text):
+    """
+    Splits the text by '\n', removes lines at the specified indices, 
+    and joins them back into a string.
+    # indices_to_remove: A set of indices to remove (0-based).
+
+    :param text: The original multiline string.
+    :return: Modified string with specified lines removed.
+    """
+    lines = text.split("\n") # Split text by newline
+    length = len(lines)
+    indices_to_remove = {0, 1, 2, length-1, length}  
+    filtered_lines = [line for i, line in enumerate(lines) if i not in indices_to_remove]
+    return "\n".join(filtered_lines) # Join remaining lines
+
+
+
 # Asynchronous function to get the Euro to Iranian Toman exchange rate from the URL
 async def get_euro_to_toman_exchange_rate_api(url="https://brsapi.ir/FreeTsetmcBourseApi/Api_Free_Gold_Currency.json"):
     try:
