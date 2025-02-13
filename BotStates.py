@@ -1,5 +1,11 @@
 from enum import Enum, auto
 
+
+class AdminStates(Enum):
+    ADMIN_MENU = auto()
+
+
+
 class States(Enum):
     MAIN_MENU = auto()
 
@@ -57,3 +63,4 @@ class States(Enum):
     GET_PHONE = auto()
     CONFIRM_PAYMENT = auto()
     PAYMENT = auto()
+

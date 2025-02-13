@@ -2,9 +2,10 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
                    get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata, get_id_by_cimeaTypeName,
-                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel,get_buyEuro_admin,
-                   get_otherOrder_admin,get_reserveHotel_admin,get_regUni_admin,get_tuitionFee_admin,get_cimea_admin,get_appFee_admin,get_toevergata_admin,
-                   get_tolcExam_admin,update_finish_buyEuro,update_finish_otherOrder,update_finish_reserveHotel,update_finish_regUni,update_finish_tutionFee,update_finish_cimea,update_finish_appFee,update_finish_toevergata,update_finish_tolcExam)
+                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel,
+                   get_admin_by_tel_userId,get_buyEuro_admin,
+                   get_otherOrder_admin,get_reserveHotel_admin, get_regUni_admin, get_tuitionFee_admin, get_cimea_admin,get_appFee_admin,
+                   get_toevergata_admin, get_tolcExam_admin, update_finish)
 
 from encrypt.password_encryption import encrypting_password,decrypting_password
 
@@ -124,6 +125,9 @@ def reserve_hotel_control(update, context):
     insert_or_update_user(update, context)
     insert_reserve_hotel(context._user_id, finish=0)
 
+def get_admin_control(update, context):
+    result = get_admin_by_tel_userId(context._user_id)
+    return len(result)
 
 
 def print_order_buyEuro(finish):
@@ -144,9 +148,10 @@ def print_order_buyEuro(finish):
         None  # Second element of the tuple
     )
     for item in data
-]
+    ]
 
     return formatted_list
+
 
 def print_order_otherOrder(finish):
     data = get_otherOrder_admin(finish)
@@ -168,6 +173,7 @@ def print_order_otherOrder(finish):
 
     return formatted_list
 
+
 def print_order_reserveHotel(finish):
     data = get_reserveHotel_admin(finish)
 
@@ -184,6 +190,7 @@ def print_order_reserveHotel(finish):
         for item in data
     ]
     return formatted_list
+
 
 def print_order_reguni(finish):
     data = get_regUni_admin(finish)
@@ -230,8 +237,8 @@ def print_order_tuitionFee(finish):
         for item in data
     ]
 
-
     return formatted_list
+
 
 def print_order_cimea(finish):
     data = get_cimea_admin(finish)
@@ -254,8 +261,8 @@ def print_order_cimea(finish):
         for item in data
     ]
 
-
     return formatted_list
+
 
 def print_order_appFee(finish):
     data = get_appFee_admin(finish)
@@ -280,8 +287,6 @@ def print_order_appFee(finish):
         for item in data
     ]
 
-
-
     return formatted_list
 
 
@@ -302,7 +307,6 @@ def print_order_tovergata(finish):
         )
         for item in data
     ]
-
 
     return formatted_list
 
@@ -329,10 +333,7 @@ def print_order_tolcExam(finish):
     for item in data
     ]
 
-
-
     return formatted_list
-
 
 
 
@@ -366,20 +367,20 @@ def update_finish_controller(message,finish):
     table_id = int(message[-2:])
     print(table_id)
     if table_id == 10 :
-        update_finish_buyEuro(finish,id)
+        update_finish("buy_currency",finish,"buyCurrencyId",id)
     elif table_id == 11:
-        update_finish_otherOrder(finish,id)
+        update_finish("order_other",finish,"orderOtherId",id)
     elif table_id == 12:
-        update_finish_reserveHotel(finish,id)
+        update_finish("reserve_hotel",finish,"reserveHotelID",id)
     elif table_id == 13:
-        update_finish_regUni(finish,id)
+        update_finish("reg_uni",finish,"regUniId",id)
     elif table_id == 14:
-        update_finish_tutionFee(finish,id)
+        update_finish("tuition_fee",finish,"tuitionFeeId",id)
     elif table_id == 15:
-        update_finish_cimea(finish,id)
+        update_finish("cimea",finish,"cimeaId",id)
     elif table_id == 16:
-        update_finish_appFee(finish,id)
+        update_finish("app_fee",finish,"appFeeId",id)
     elif table_id == 17:
-        update_finish_toevergata(finish,id)
+        update_finish("torvergata",finish,"torvergataId",id)
     elif table_id == 18:
-        update_finish_tolcExam(finish,id)
+        update_finish("tolc_order_exam",finish,"tolcOrderExamId",id)

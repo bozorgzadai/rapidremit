@@ -88,6 +88,20 @@ def main_menu_keyboard() -> ReplyKeyboardMarkup:
     )
 
 
+def admin_menu_keyboard() -> ReplyKeyboardMarkup:
+    broadcast_btn = KeyboardButton("پیام همگانی")
+    finish_btn = KeyboardButton("سفارش‌های تکمیل نشده")
+    unfinish_btn = KeyboardButton("سفارش‌های تکمیل شده")
+    return ReplyKeyboardMarkup(
+        [
+            [broadcast_btn],
+            [finish_btn, unfinish_btn],
+        ],
+        resize_keyboard=True,
+    )
+
+
+
 def italy_main_menu_keyboard() -> ReplyKeyboardMarkup:
     reserve_exam_btn = KeyboardButton("رزرو آزمون")
     cimea_payment_btn = KeyboardButton("پرداخت چیمه آ(CIMEA)")

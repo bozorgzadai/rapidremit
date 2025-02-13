@@ -100,6 +100,12 @@ def get_cimeaPrice_by_cimeaTypeAndSpeedId(cimeaTypeId, cimeaSpeedId):
     select_params = (cimeaTypeId, cimeaSpeedId,)
     return db.select(select_query, select_params)
 
+def get_admin_by_tel_userId(tel_userId):
+    db = Database.get_database()
+    select_query = "SELECT * FROM admin WHERE tel_userId = %s"
+    select_params = (tel_userId,)
+    return db.select(select_query, select_params)
+
 
 
 
@@ -400,6 +406,7 @@ def update_user(userId, userName='', userFirstName='', userLastName='', phoneNum
     db.execute(update_query, update_params)
 
 
+
 def update_cisia_account(tel_userId, username='', password=''):
     db = Database.get_database()
     
@@ -407,6 +414,8 @@ def update_cisia_account(tel_userId, username='', password=''):
                                         WHERE tel_userId = %s"""
     update_params = (tel_userId, username, password)
     db.execute(update_query, update_params)
+
+
 
 def update_finish(table_name,finish,column_name,id):
     db = Database.get_database()
@@ -418,33 +427,3 @@ def update_finish(table_name,finish,column_name,id):
     """
     update_params = (finish,id)
     db.execute(update_query,update_params)
-
-
-def update_finish_buyEuro(finish,id):
-    update_finish("buy_currency",finish,"buyCurrencyId",id)
-
-def update_finish_otherOrder(finish,id):
-    update_finish("order_other",finish,"orderOtherId",id)
-
-def update_finish_reserveHotel(finish,id):
-    update_finish("reserve_hotel",finish,"reserveHotelID",id)
-
-def update_finish_regUni(finish,id):
-    update_finish("reg_uni",finish,"regUniId",id)
-
-def update_finish_tutionFee(finish,id):
-    update_finish("tuition_fee",finish,"tuitionFeeId",id)
-
-def update_finish_cimea(finish,id):
-    update_finish("cimea",finish,"cimeaId",id)
-
-def update_finish_appFee(finish,id):
-    update_finish("app_fee",finish,"appFeeId",id)
-
-def update_finish_toevergata(finish,id):
-    update_finish("torvergata",finish,"torvergataId",id)
-
-def update_finish_tolcExam(finish,id):
-    update_finish("tolc_order_exam",finish,"tolcOrderExamId",id)
-
-
