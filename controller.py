@@ -2,9 +2,11 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
                    get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata, get_id_by_cimeaTypeName,
-                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel)
+                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel,get_buyEuro_admin,
+                   get_otherOrder_admin,get_reserveHotel_admin,get_regUni_admin,get_tuitionFee_admin,get_cimea_admin,get_appFee_admin,get_toevergata_admin,
+                   get_tolcExam_admin,update_finish_buyEuro,update_finish_otherOrder,update_finish_reserveHotel,update_finish_regUni,update_finish_tutionFee,update_finish_cimea,update_finish_appFee,update_finish_toevergata,update_finish_tolcExam)
 
-from encrypt.password_encryption import encrypting_password
+from encrypt.password_encryption import encrypting_password,decrypting_password
 
 
 def get_id_by_regTypeName_control(regTypeName):
@@ -123,3 +125,261 @@ def reserve_hotel_control(update, context):
     insert_reserve_hotel(context._user_id, finish=0)
 
 
+
+def print_order_buyEuro(finish):
+    data = get_buyEuro_admin(finish)
+
+    formatted_list = [
+    (
+        f"🆔شناسه خرید:\n{item['buyCurrencyId']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"💰مقدار:\n{item['value']}\n\n"
+        f"💱ارز:\n{item['currency_name']}\n\n"
+        f"📌نوع پرداختی:\nخرید یورو\n\n"
+        f"{'-'*50}\n"
+        f"result10",
+        None  # Second element of the tuple
+    )
+    for item in data
+]
+
+    return formatted_list
+
+def print_order_otherOrder(finish):
+    data = get_otherOrder_admin(finish)
+
+    formatted_list = [(
+        f"🆔شناسه سفارش:\n{item['orderOtherId']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"📝توضیحات:\n{item['description']}\n\n"
+        f"💰قیمت:\n{item['price']}\n\n"
+        f"📌نوع پرداختی:\nothers\n\n"
+        f"{'-'*50}\n"
+        f"result11",
+        None)
+        for item in data
+    ]
+
+    return formatted_list
+
+def print_order_reserveHotel(finish):
+    data = get_reserveHotel_admin(finish)
+
+    formatted_list = [(
+        f"🆔شناسه رزرو:\n{item['reserveHotelID']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"🏨نوع پرداختی:\nرزرو هتل\n\n"
+        f"{'-'*50}\n"
+        f"result12",
+        None)
+        for item in data
+    ]
+    return formatted_list
+
+def print_order_reguni(finish):
+    data = get_regUni_admin(finish)
+
+    formatted_list = [(
+        f"🆔شناسه ثبت‌نام:\n{item['regUniId']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"📚نوع ثبت‌نام:\n{item['regTypeName']}\n\n"
+        f"🎓مقطع تحصیلی:\n{item['regCourseLevelName']}\n\n"
+        f"🗣زبان دوره:\n{item['regCourseLangName']}\n\n"
+        f"🏛دانشگاه:\n{item['uniName']}\n\n"
+        f"📖نام رشته/دوره:\n{item['courseName']}\n\n"
+        f"📌نوع پرداختی:\nثبت‌نام دانشگاه\n\n"
+        f"{'-'*50}\n"
+        f"result13",None)
+        for item in data
+    ]
+
+    return formatted_list
+
+
+def print_order_tuitionFee(finish):
+    data = get_tuitionFee_admin(finish)
+    formatted_list = [
+        (
+            f"🆔شناسه پرداخت شهریه:\n{item['tuitionFeeId']}\n\n"
+            f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+            f"🏷نام کاربری:\n{item['userName']}\n\n"
+            f"📞تلفن:\n{item['phoneNumber']}\n\n"
+            f"🏛دانشگاه:\n{item['university']}\n\n"
+            f"🎓مدرک تحصیلی:\n{item['degree']}\n\n"
+            f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
+            f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
+            f"💰مبلغ نهایی (ریال):\n{item['rial_change']}\n\n"
+            f"📌نوع پرداختی:\nپرداخت شهریه\n\n"
+            f"{'-'*50}\n"
+            f"result14",
+            item['trans_filepath']  # Transaction file in the second field of tuple
+        )
+        for item in data
+    ]
+
+
+    return formatted_list
+
+def print_order_cimea(finish):
+    data = get_cimea_admin(finish)
+
+    formatted_list = [
+    (
+        f"🆔شناسه CIMEA:\n{item['cimeaId']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"💰قیمت:\n{item['cimeaPrice']} \n\n"
+        f"🚀سرعت بررسی:\n{item['cimeaSpeedName']}\n\n"
+        f"📄نوع مقایسه:\n{item['cimeaTypeName']}\n\n"
+        f"📌نوع پرداختی:\nCIMEA\n\n"
+        f"{'-'*50}\n"
+        f"result15",
+        item['trans_filepath']  # Transaction file in second field of tuple
+        )
+        for item in data
+    ]
+
+
+    return formatted_list
+
+def print_order_appFee(finish):
+    data = get_appFee_admin(finish)
+
+    formatted_list = [
+    (
+        f"🆔شناسه پرداخت اپلیکیشن فی:\n{item['appFeeId']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"🏛دانشگاه:\n{item['university']}\n\n"
+        f"🎓مدرک تحصیلی:\n{item['degree']}\n\n"
+        f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
+        f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
+        f"💰مبلغ نهایی (ریال):\n{item['rialchange']}\n\n"
+        f"📌نوع پرداختی:\nپرداخت اپلیکیشن فی\n\n"
+        f"{'-'*50}\n"
+        f"result16",
+        item['trans_filepath']  # Transaction file in second field of tuple
+        )
+        for item in data
+    ]
+
+
+
+    return formatted_list
+
+
+def print_order_tovergata(finish):
+    data = get_toevergata_admin(finish)
+
+    formatted_list = [
+        (
+            f"🆔شناسه پرداخت Tor Vergata:\n{item['torvergataId']}\n\n"
+            f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+            f"🏷نام کاربری:\n{item['userName']}\n\n"
+            f"📞تلفن:\n{item['phoneNumber']}\n\n"
+            f"📌نوع پرداختی:\nپرداخت Tor Vergata\n\n"
+            f"{'-'*50}\n"
+            f"result17",
+            item['trans_filepath']  # Transaction file in second field of tuple
+        )
+        for item in data
+    ]
+
+
+    return formatted_list
+
+
+def print_order_tolcExam(finish):
+    data = get_tolcExam_admin(finish)
+
+    formatted_list = [
+    (
+        f"🆔شناسه سفارش آزمون TOLC:\n{item['tolcOrderExamId']}\n\n"
+        f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
+        f"🏷نام کاربری:\n{item['userName']}\n\n"
+        f"📞تلفن:\n{item['phoneNumber']}\n\n"
+        f"📝نام آزمون:\n{item['tolcExamDetailName']}\n\n"
+        f"📚نوع آزمون:\n{item['tolcExamTypeName']}\n\n"
+        f"🔑نام کاربری چیزآ:\n{item['username']}\n\n"
+        f"🔒رمز عبور چیزآ:\n{decrypting_password(item['password'])}\n\n"
+        f"📌نوع پرداختی:\nسفارش آزمون TOLC\n\n"
+        f"{'-'*50}\n"
+        f"result18",
+        item['trans_filePath']  # Transaction file in the second field of tuple
+    )
+    for item in data
+    ]
+
+
+
+    return formatted_list
+
+
+
+
+def print_order(finish):
+    data=[]
+    for i in print_order_buyEuro(finish):
+        data.append(i)
+    for i in print_order_otherOrder(finish):
+        data.append(i)
+    for i in print_order_reserveHotel(finish):
+        data.append(i)
+    for i in print_order_reguni(finish):
+        data.append(i)
+    for i in print_order_tuitionFee(finish):
+        data.append(i)
+    for i in print_order_cimea(finish):
+        data.append(i)
+    for i in print_order_appFee(finish):
+        data.append(i)
+    for i in print_order_tovergata(finish):
+        data.append(i)
+    for i in print_order_tolcExam(finish):
+        data.append(i)
+
+    return data
+
+
+def update_finish_controller(message,finish):
+    id = int(message.split("\n")[1])
+    print(id)
+    table_id = int(message[-2:])
+    print(table_id)
+    if table_id == 10 :
+        update_finish_buyEuro(finish,id)
+    elif table_id == 11:
+        update_finish_otherOrder(finish,id)
+    elif table_id == 12:
+        update_finish_reserveHotel(finish,id)
+    elif table_id == 13:
+        update_finish_regUni(finish,id)
+    elif table_id == 14:
+        update_finish_tutionFee(finish,id)
+    elif table_id == 15:
+        update_finish_cimea(finish,id)
+    elif table_id == 16:
+        update_finish_appFee(finish,id)
+    elif table_id == 17:
+        update_finish_toevergata(finish,id)
+    elif table_id == 18:
+        update_finish_tolcExam(finish,id)
