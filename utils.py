@@ -13,6 +13,23 @@ async def terminate_handler(update, context):
 
 
 
+def remove_lines_by_index(text):
+    """
+    Splits the text by '\n', removes lines at the specified indices, 
+    and joins them back into a string.
+    # indices_to_remove: A set of indices to remove (0-based).
+
+    :param text: The original multiline string.
+    :return: Modified string with specified lines removed.
+    """
+    lines = text.split("\n") # Split text by newline
+    length = len(lines)
+    indices_to_remove = {0, 1, 2, length-1, length}  
+    filtered_lines = [line for i, line in enumerate(lines) if i not in indices_to_remove]
+    return "\n".join(filtered_lines) # Join remaining lines
+
+
+
 # Asynchronous function to get the Euro to Iranian Toman exchange rate from the URL
 async def get_euro_to_toman_exchange_rate_api(url="https://brsapi.ir/FreeTsetmcBourseApi/Api_Free_Gold_Currency.json"):
     try:
@@ -40,7 +57,7 @@ async def get_euro_to_toman_exchange_rate_api(url="https://brsapi.ir/FreeTsetmcB
 
 
 
-async def save_transaction_photo(update, context, save_directory):
+async def save_transaction_image(update, context, save_directory):
     # Get the largest version of the photo (last item in the list)
     photo_file = await update.message.photo[-1].get_file()
 
@@ -60,3 +77,13 @@ async def save_transaction_photo(update, context, save_directory):
 
     return unique_filename
 
+
+
+async def send_image(update, context, image_path) -> None:
+    chat_id = update.message.chat_id
+
+    if os.path.exists(image_path):  # Ensure the file exists
+        with open(image_path, 'rb') as photo:
+            await context.bot.send_photo(chat_id=chat_id, photo=photo)
+    else:
+        await update.message.reply_text("Image not found on the server.")

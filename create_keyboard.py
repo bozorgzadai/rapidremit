@@ -101,6 +101,22 @@ def admin_menu_keyboard() -> ReplyKeyboardMarkup:
     )
 
 
+def isfinish_order_keyboard(isfinish_text) -> ReplyKeyboardMarkup:
+    next_btn = KeyboardButton("بعدی")
+    prev_btn = KeyboardButton("قبلی")
+    isfinish_btn = KeyboardButton(isfinish_text)
+    back_btn = KeyboardButton("بازگشت")
+    return ReplyKeyboardMarkup(
+        [
+            [next_btn, prev_btn],
+            [isfinish_btn],
+            [back_btn],
+        ],
+        resize_keyboard=True,
+    )
+
+
+
 
 def italy_main_menu_keyboard() -> ReplyKeyboardMarkup:
     reserve_exam_btn = KeyboardButton("رزرو آزمون")

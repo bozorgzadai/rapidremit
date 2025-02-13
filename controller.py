@@ -151,20 +151,20 @@ def get_admin_control(update, context):
     return len(result)
 
 
-def print_order_buyEuro(finish):
+def get_order_controller_buyEuro(finish):
     data = get_buyEuro_admin(finish)
 
     formatted_list = [
     (
         f"🆔شناسه خرید:\n{item['buyCurrencyId']}\n\n"
+        f"📌نوع پرداختی:\nخرید یورو\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
         f"📞تلفن:\n{item['phoneNumber']}\n\n"
         f"💰مقدار:\n{item['value']}\n\n"
         f"💱ارز:\n{item['currency_name']}\n\n"
-        f"📌نوع پرداختی:\nخرید یورو\n\n"
-        f"{'-'*50}\n"
         f"result10",
         None  # Second element of the tuple
     )
@@ -174,19 +174,19 @@ def print_order_buyEuro(finish):
     return formatted_list
 
 
-def print_order_otherOrder(finish):
+def get_order_controller_otherOrder(finish):
     data = get_otherOrder_admin(finish)
 
     formatted_list = [(
         f"🆔شناسه سفارش:\n{item['orderOtherId']}\n\n"
+        f"📌نوع پرداختی:\nothers\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
         f"📞تلفن:\n{item['phoneNumber']}\n\n"
         f"📝توضیحات:\n{item['description']}\n\n"
         f"💰قیمت:\n{item['price']}\n\n"
-        f"📌نوع پرداختی:\nothers\n\n"
-        f"{'-'*50}\n"
         f"result11",
         None)
         for item in data
@@ -195,17 +195,17 @@ def print_order_otherOrder(finish):
     return formatted_list
 
 
-def print_order_reserveHotel(finish):
+def get_order_controller_reserveHotel(finish):
     data = get_reserveHotel_admin(finish)
 
     formatted_list = [(
         f"🆔شناسه رزرو:\n{item['reserveHotelID']}\n\n"
+        f"🏨نوع پرداختی:\nرزرو هتل\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
         f"📞تلفن:\n{item['phoneNumber']}\n\n"
-        f"🏨نوع پرداختی:\nرزرو هتل\n\n"
-        f"{'-'*50}\n"
         f"result12",
         None)
         for item in data
@@ -213,11 +213,13 @@ def print_order_reserveHotel(finish):
     return formatted_list
 
 
-def print_order_reguni(finish):
+def get_order_controller_reguni(finish):
     data = get_regUni_admin(finish)
 
     formatted_list = [(
         f"🆔شناسه ثبت‌نام:\n{item['regUniId']}\n\n"
+        f"📌نوع پرداختی:\nثبت‌نام دانشگاه\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
@@ -227,20 +229,21 @@ def print_order_reguni(finish):
         f"🗣زبان دوره:\n{item['regCourseLangName']}\n\n"
         f"🏛دانشگاه:\n{item['uniName']}\n\n"
         f"📖نام رشته/دوره:\n{item['courseName']}\n\n"
-        f"📌نوع پرداختی:\nثبت‌نام دانشگاه\n\n"
-        f"{'-'*50}\n"
-        f"result13",None)
+        f"result13",
+        None)
         for item in data
     ]
 
     return formatted_list
 
 
-def print_order_tuitionFee(finish):
+def get_order_controller_tuitionFee(finish):
     data = get_tuitionFee_admin(finish)
     formatted_list = [
         (
             f"🆔شناسه پرداخت شهریه:\n{item['tuitionFeeId']}\n\n"
+            f"📌نوع پرداختی:\nپرداخت شهریه\n"
+            f"{'-'*50}\n\n"
             f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
             f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
             f"🏷نام کاربری:\n{item['userName']}\n\n"
@@ -250,10 +253,9 @@ def print_order_tuitionFee(finish):
             f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
             f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
             f"💰مبلغ نهایی (ریال):\n{item['rial_change']}\n\n"
-            f"📌نوع پرداختی:\nپرداخت شهریه\n\n"
-            f"{'-'*50}\n"
             f"result14",
-            item['trans_filepath']  # Transaction file in the second field of tuple
+            item['trans_filepath'],  # Transaction file in the second field of tuple
+            "app_and_tuition_fee",
         )
         for item in data
     ]
@@ -261,12 +263,14 @@ def print_order_tuitionFee(finish):
     return formatted_list
 
 
-def print_order_cimea(finish):
+def get_order_controller_cimea(finish):
     data = get_cimea_admin(finish)
 
     formatted_list = [
     (
         f"🆔شناسه CIMEA:\n{item['cimeaId']}\n\n"
+        f"📌نوع پرداختی:\nCIMEA\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
@@ -274,10 +278,9 @@ def print_order_cimea(finish):
         f"💰قیمت:\n{item['cimeaPrice']} \n\n"
         f"🚀سرعت بررسی:\n{item['cimeaSpeedName']}\n\n"
         f"📄نوع مقایسه:\n{item['cimeaTypeName']}\n\n"
-        f"📌نوع پرداختی:\nCIMEA\n\n"
-        f"{'-'*50}\n"
         f"result15",
-        item['trans_filepath']  # Transaction file in second field of tuple
+        item['trans_filepath'],  # Transaction file in second field of tuple
+        "cimea",
         )
         for item in data
     ]
@@ -285,12 +288,14 @@ def print_order_cimea(finish):
     return formatted_list
 
 
-def print_order_appFee(finish):
+def get_order_controller_appFee(finish):
     data = get_appFee_admin(finish)
 
     formatted_list = [
     (
         f"🆔شناسه پرداخت اپلیکیشن فی:\n{item['appFeeId']}\n\n"
+        f"📌نوع پرداختی:\nپرداخت اپلیکیشن فی\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
@@ -300,10 +305,9 @@ def print_order_appFee(finish):
         f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
         f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
         f"💰مبلغ نهایی (ریال):\n{item['rialchange']}\n\n"
-        f"📌نوع پرداختی:\nپرداخت اپلیکیشن فی\n\n"
-        f"{'-'*50}\n"
         f"result16",
-        item['trans_filepath']  # Transaction file in second field of tuple
+        item['trans_filepath'],  # Transaction file in second field of tuple
+        "app_and_tuition_fee",
         )
         for item in data
     ]
@@ -311,20 +315,21 @@ def print_order_appFee(finish):
     return formatted_list
 
 
-def print_order_tovergata(finish):
+def get_order_controller_tovergata(finish):
     data = get_toevergata_admin(finish)
 
     formatted_list = [
         (
             f"🆔شناسه پرداخت Tor Vergata:\n{item['torvergataId']}\n\n"
+            f"📌نوع پرداختی:\nپرداخت Tor Vergata\n"
+            f"{'-'*50}\n\n"
             f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
             f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
             f"🏷نام کاربری:\n{item['userName']}\n\n"
             f"📞تلفن:\n{item['phoneNumber']}\n\n"
-            f"📌نوع پرداختی:\nپرداخت Tor Vergata\n\n"
-            f"{'-'*50}\n"
             f"result17",
-            item['trans_filepath']  # Transaction file in second field of tuple
+            item['trans_filepath'],  # Transaction file in second field of tuple
+            "torvergata",
         )
         for item in data
     ]
@@ -332,12 +337,14 @@ def print_order_tovergata(finish):
     return formatted_list
 
 
-def print_order_tolcExam(finish):
+def get_order_controller_tolcExam(finish):
     data = get_tolcExam_admin(finish)
 
     formatted_list = [
     (
         f"🆔شناسه سفارش آزمون TOLC:\n{item['tolcOrderExamId']}\n\n"
+        f"📌نوع پرداختی:\nسفارش آزمون TOLC\n"
+        f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
@@ -346,10 +353,9 @@ def print_order_tolcExam(finish):
         f"📚نوع آزمون:\n{item['tolcExamTypeName']}\n\n"
         f"🔑نام کاربری چیزآ:\n{item['username']}\n\n"
         f"🔒رمز عبور چیزآ:\n{decrypting_password(item['password'])}\n\n"
-        f"📌نوع پرداختی:\nسفارش آزمون TOLC\n\n"
-        f"{'-'*50}\n"
         f"result18",
-        item['trans_filePath']  # Transaction file in the second field of tuple
+        item['trans_filePath'],  # Transaction file in the second field of tuple
+        "tolc_exam",
     )
     for item in data
     ]
@@ -358,50 +364,49 @@ def print_order_tolcExam(finish):
 
 
 
-def print_order(finish):
+def get_order_controller(finish):
     data=[]
-    for i in print_order_buyEuro(finish):
+    for i in get_order_controller_buyEuro(finish):
         data.append(i)
-    for i in print_order_otherOrder(finish):
+    for i in get_order_controller_otherOrder(finish):
         data.append(i)
-    for i in print_order_reserveHotel(finish):
+    for i in get_order_controller_reserveHotel(finish):
         data.append(i)
-    for i in print_order_reguni(finish):
+    for i in get_order_controller_reguni(finish):
         data.append(i)
-    for i in print_order_tuitionFee(finish):
+    for i in get_order_controller_tuitionFee(finish):
         data.append(i)
-    for i in print_order_cimea(finish):
+    for i in get_order_controller_cimea(finish):
         data.append(i)
-    for i in print_order_appFee(finish):
+    for i in get_order_controller_appFee(finish):
         data.append(i)
-    for i in print_order_tovergata(finish):
+    for i in get_order_controller_tovergata(finish):
         data.append(i)
-    for i in print_order_tolcExam(finish):
+    for i in get_order_controller_tolcExam(finish):
         data.append(i)
 
     return data
 
 
-def update_finish_controller(message,finish):
+def update_isfinish_controller(message, finish):
     id = int(message.split("\n")[1])
-    print(id)
     table_id = int(message[-2:])
-    print(table_id)
+    
     if table_id == 10 :
-        update_finish("buy_currency",finish,"buyCurrencyId",id)
+        update_finish("buy_currency", finish, "buyCurrencyId", id)
     elif table_id == 11:
-        update_finish("order_other",finish,"orderOtherId",id)
+        update_finish("order_other", finish, "orderOtherId", id)
     elif table_id == 12:
-        update_finish("reserve_hotel",finish,"reserveHotelID",id)
+        update_finish("reserve_hotel", finish, "reserveHotelID", id)
     elif table_id == 13:
-        update_finish("reg_uni",finish,"regUniId",id)
+        update_finish("reg_uni", finish, "regUniId", id)
     elif table_id == 14:
-        update_finish("tuition_fee",finish,"tuitionFeeId",id)
+        update_finish("tuition_fee", finish, "tuitionFeeId", id)
     elif table_id == 15:
-        update_finish("cimea",finish,"cimeaId",id)
+        update_finish("cimea", finish, "cimeaId", id)
     elif table_id == 16:
-        update_finish("app_fee",finish,"appFeeId",id)
+        update_finish("app_fee", finish, "appFeeId", id)
     elif table_id == 17:
-        update_finish("torvergata",finish,"torvergataId",id)
+        update_finish("torvergata", finish, "torvergataId", id)
     elif table_id == 18:
-        update_finish("tolc_order_exam",finish,"tolcOrderExamId",id)
+        update_finish("tolc_order_exam", finish, "tolcOrderExamId", id)

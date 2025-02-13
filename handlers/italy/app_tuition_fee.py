@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from BotStates import States
-from utils import get_euro_to_toman_exchange_rate_api, save_transaction_photo
+from utils import get_euro_to_toman_exchange_rate_api, save_transaction_image
 from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import back_button_keyboard, pay_cancel_keyboard
@@ -177,7 +177,7 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
 
     elif update.message.photo:
         save_directory = "saved_photo/app_and_tuition_fee"
-        filename = await save_transaction_photo(update, context, save_directory)
+        filename = await save_transaction_image(update, context, save_directory)
         context.user_data["app_fee_trans_filepath"] = filename
 
         if context.user_data["is_app_fee"]:
