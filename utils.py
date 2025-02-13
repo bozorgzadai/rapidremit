@@ -1,7 +1,16 @@
 
+from telegram.ext import ConversationHandler
 import os
 import time
 import aiohttp
+
+
+async def terminate_handler(update, context):
+    """
+    Terminate the current conversation when a command is received.
+    """
+    return ConversationHandler.END
+
 
 
 # Asynchronous function to get the Euro to Iranian Toman exchange rate from the URL

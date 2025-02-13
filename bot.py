@@ -1,6 +1,8 @@
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ConversationHandler, filters
-from BotStates import States
+from BotStates import States, AdminStates
 from config import TOKEN
+from utils import terminate_handler
+from handlers.admin.admin_menu import admin_menu, goto_admin_menu
 from handlers.main_menu import  main_menu, goto_main_menu
 from handlers.buy_euro import buy_euro_amount, buy_euro_contact, buy_euro_id
 from handlers.other_order import others_description, others_amount, others_contact, others_id
@@ -204,11 +206,28 @@ def main():
             ],
 
         },
-        fallbacks=[CommandHandler('cancel', goto_main_menu)],
-        allow_reentry=True
+        fallbacks=[MessageHandler(filters.COMMAND, terminate_handler),],
+        allow_reentry=True,
     )
+    application.add_handler(conv_handler, group=1)
 
-    application.add_handler(conv_handler)
+
+
+
+    admin_handler = ConversationHandler(
+        entry_points=[CommandHandler('admin', goto_admin_menu)],
+        states={
+            AdminStates.ADMIN_MENU: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, admin_menu)
+            ],
+
+        },
+        fallbacks=[MessageHandler(filters.COMMAND, terminate_handler),],
+        allow_reentry=True,
+    )
+    application.add_handler(admin_handler, group=2)
+
+
 
     # Error handler
     async def error_handler(update: object, context) -> None:
@@ -225,3 +244,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

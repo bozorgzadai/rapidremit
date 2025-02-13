@@ -2,7 +2,8 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
                    get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata, get_id_by_cimeaTypeName,
-                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel)
+                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel,
+                   get_admin_by_tel_userId)
 
 from encrypt.password_encryption import encrypting_password
 
@@ -122,4 +123,7 @@ def reserve_hotel_control(update, context):
     insert_or_update_user(update, context)
     insert_reserve_hotel(context._user_id, finish=0)
 
+def get_admin_control(update, context):
+    result = get_admin_by_tel_userId(context._user_id)
+    return len(result)
 

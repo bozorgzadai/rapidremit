@@ -4,6 +4,7 @@ from create_keyboard import main_menu_keyboard
 from BotStates import States
 
 
+
 async def goto_main_menu(update, context, message=None):
     default_message = "خوش آمدید! یک گزینه را انتخاب کنید:"
 
@@ -38,8 +39,4 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_main_menu(update, context, message)
-    
-
-
-
 

@@ -100,6 +100,12 @@ def get_cimeaPrice_by_cimeaTypeAndSpeedId(cimeaTypeId, cimeaSpeedId):
     select_params = (cimeaTypeId, cimeaSpeedId,)
     return db.select(select_query, select_params)
 
+def get_admin_by_tel_userId(tel_userId):
+    db = Database.get_database()
+    select_query = "SELECT * FROM admin WHERE tel_userId = %s"
+    select_params = (tel_userId,)
+    return db.select(select_query, select_params)
+
 
 
 
