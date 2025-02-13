@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from BotStates import States
-from utils import save_transaction_photo
+from utils import save_transaction_image
 from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import back_button_keyboard, reply_keyboard_cimea_type, reply_keyboard_cimea_speed, pay_cancel_keyboard
@@ -140,7 +140,7 @@ async def goto_italy_cimea_receipt(update, context, message=None):
 async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
         save_directory = "saved_photo/cimea"
-        filename = await save_transaction_photo(update, context, save_directory)
+        filename = await save_transaction_image(update, context, save_directory)
         context.user_data["cimea_trans_filepath"] = filename
 
         cimea_control(update, context)

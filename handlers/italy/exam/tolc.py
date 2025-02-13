@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from BotStates import States
 from handlers.main_menu import goto_main_menu
-from utils import save_transaction_photo
+from utils import save_transaction_image
 from handlers.italy.exam.exam_main import goto_italy_reserve_exam
 from create_keyboard import (reply_keyboard_tolc_exam_type, reply_keyboard_tolc_exam_detail, back_button_keyboard,
                              pay_cancel_keyboard, yes_no_keyboard)
@@ -238,7 +238,7 @@ async def goto_payment(update, message=None):
 async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
         save_directory = "saved_photo/tolc_exam"
-        filename = await save_transaction_photo(update, context, save_directory)
+        filename = await save_transaction_image(update, context, save_directory)
         context.user_data["tolc_exam_trans_filepath"] = filename
 
         tolc_order_exam_control(update, context)

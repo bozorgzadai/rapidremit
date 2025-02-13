@@ -40,7 +40,7 @@ async def get_euro_to_toman_exchange_rate_api(url="https://brsapi.ir/FreeTsetmcB
 
 
 
-async def save_transaction_photo(update, context, save_directory):
+async def save_transaction_image(update, context, save_directory):
     # Get the largest version of the photo (last item in the list)
     photo_file = await update.message.photo[-1].get_file()
 
@@ -60,3 +60,13 @@ async def save_transaction_photo(update, context, save_directory):
 
     return unique_filename
 
+
+
+async def send_image(update, context, image_path) -> None:
+    chat_id = update.message.chat_id
+
+    if os.path.exists(image_path):  # Ensure the file exists
+        with open(image_path, 'rb') as photo:
+            await context.bot.send_photo(chat_id=chat_id, photo=photo)
+    else:
+        await update.message.reply_text("Image not found on the server.")

@@ -3,6 +3,7 @@ from enum import Enum, auto
 
 class AdminStates(Enum):
     ADMIN_MENU = auto()
+    UNFINISH_ORDER = auto()
 
 
 

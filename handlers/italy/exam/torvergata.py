@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from BotStates import States
 from handlers.main_menu import goto_main_menu
-from utils import save_transaction_photo
+from utils import save_transaction_image
 from handlers.italy.exam.exam_main import goto_italy_reserve_exam
 from create_keyboard import back_button_keyboard, pay_cancel_keyboard
 from controller import torvergata_control
@@ -89,7 +89,7 @@ async def goto_handle_payment_receipt(update, message=None):
 async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message.photo:
         save_directory = "saved_photo/torvergata"
-        filename = await save_transaction_photo(update, context, save_directory)
+        filename = await save_transaction_image(update, context, save_directory)
         context.user_data["torvergata_trans_filepath"] = filename
 
         torvergata_control(update, context)

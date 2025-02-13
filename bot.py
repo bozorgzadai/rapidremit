@@ -26,6 +26,7 @@ from handlers.italy.exam.torvergata import (reserve_torvergata, reserve_torverga
 from handlers.italy.exam.tolc import (italy_reserve_exam_tolc, handle_iolc_x_selection, have_cisia_account, get_cisia_username,
                                       get_cisia_pass, get_exam_date, get_id, get_phone, confirm_payment, payment)
 
+from handlers.admin.unfinish_order import unfinish_order
 
 
 def main():
@@ -219,6 +220,9 @@ def main():
         states={
             AdminStates.ADMIN_MENU: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, admin_menu)
+            ],
+            AdminStates.UNFINISH_ORDER: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, unfinish_order)
             ],
 
         },

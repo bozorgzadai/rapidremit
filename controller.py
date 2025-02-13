@@ -130,7 +130,7 @@ def get_admin_control(update, context):
     return len(result)
 
 
-def print_order_buyEuro(finish):
+def get_order_controller_buyEuro(finish):
     data = get_buyEuro_admin(finish)
 
     formatted_list = [
@@ -153,7 +153,7 @@ def print_order_buyEuro(finish):
     return formatted_list
 
 
-def print_order_otherOrder(finish):
+def get_order_controller_otherOrder(finish):
     data = get_otherOrder_admin(finish)
 
     formatted_list = [(
@@ -174,7 +174,7 @@ def print_order_otherOrder(finish):
     return formatted_list
 
 
-def print_order_reserveHotel(finish):
+def get_order_controller_reserveHotel(finish):
     data = get_reserveHotel_admin(finish)
 
     formatted_list = [(
@@ -192,7 +192,7 @@ def print_order_reserveHotel(finish):
     return formatted_list
 
 
-def print_order_reguni(finish):
+def get_order_controller_reguni(finish):
     data = get_regUni_admin(finish)
 
     formatted_list = [(
@@ -208,14 +208,15 @@ def print_order_reguni(finish):
         f"📖نام رشته/دوره:\n{item['courseName']}\n\n"
         f"📌نوع پرداختی:\nثبت‌نام دانشگاه\n\n"
         f"{'-'*50}\n"
-        f"result13",None)
+        f"result13",
+        None)
         for item in data
     ]
 
     return formatted_list
 
 
-def print_order_tuitionFee(finish):
+def get_order_controller_tuitionFee(finish):
     data = get_tuitionFee_admin(finish)
     formatted_list = [
         (
@@ -232,7 +233,8 @@ def print_order_tuitionFee(finish):
             f"📌نوع پرداختی:\nپرداخت شهریه\n\n"
             f"{'-'*50}\n"
             f"result14",
-            item['trans_filepath']  # Transaction file in the second field of tuple
+            item['trans_filepath'],  # Transaction file in the second field of tuple
+            "app_and_tuition_fee",
         )
         for item in data
     ]
@@ -240,7 +242,7 @@ def print_order_tuitionFee(finish):
     return formatted_list
 
 
-def print_order_cimea(finish):
+def get_order_controller_cimea(finish):
     data = get_cimea_admin(finish)
 
     formatted_list = [
@@ -256,7 +258,8 @@ def print_order_cimea(finish):
         f"📌نوع پرداختی:\nCIMEA\n\n"
         f"{'-'*50}\n"
         f"result15",
-        item['trans_filepath']  # Transaction file in second field of tuple
+        item['trans_filepath'],  # Transaction file in second field of tuple
+        "cimea",
         )
         for item in data
     ]
@@ -264,7 +267,7 @@ def print_order_cimea(finish):
     return formatted_list
 
 
-def print_order_appFee(finish):
+def get_order_controller_appFee(finish):
     data = get_appFee_admin(finish)
 
     formatted_list = [
@@ -282,7 +285,8 @@ def print_order_appFee(finish):
         f"📌نوع پرداختی:\nپرداخت اپلیکیشن فی\n\n"
         f"{'-'*50}\n"
         f"result16",
-        item['trans_filepath']  # Transaction file in second field of tuple
+        item['trans_filepath'],  # Transaction file in second field of tuple
+        "app_and_tuition_fee",
         )
         for item in data
     ]
@@ -290,7 +294,7 @@ def print_order_appFee(finish):
     return formatted_list
 
 
-def print_order_tovergata(finish):
+def get_order_controller_tovergata(finish):
     data = get_toevergata_admin(finish)
 
     formatted_list = [
@@ -303,7 +307,8 @@ def print_order_tovergata(finish):
             f"📌نوع پرداختی:\nپرداخت Tor Vergata\n\n"
             f"{'-'*50}\n"
             f"result17",
-            item['trans_filepath']  # Transaction file in second field of tuple
+            item['trans_filepath'],  # Transaction file in second field of tuple
+            "torvergata",
         )
         for item in data
     ]
@@ -311,7 +316,7 @@ def print_order_tovergata(finish):
     return formatted_list
 
 
-def print_order_tolcExam(finish):
+def get_order_controller_tolcExam(finish):
     data = get_tolcExam_admin(finish)
 
     formatted_list = [
@@ -328,7 +333,8 @@ def print_order_tolcExam(finish):
         f"📌نوع پرداختی:\nسفارش آزمون TOLC\n\n"
         f"{'-'*50}\n"
         f"result18",
-        item['trans_filePath']  # Transaction file in the second field of tuple
+        item['trans_filePath'],  # Transaction file in the second field of tuple
+        "tolc_exam",
     )
     for item in data
     ]
@@ -337,35 +343,34 @@ def print_order_tolcExam(finish):
 
 
 
-def print_order(finish):
+def get_order_controller(finish):
     data=[]
-    for i in print_order_buyEuro(finish):
+    for i in get_order_controller_buyEuro(finish):
         data.append(i)
-    for i in print_order_otherOrder(finish):
+    for i in get_order_controller_otherOrder(finish):
         data.append(i)
-    for i in print_order_reserveHotel(finish):
+    for i in get_order_controller_reserveHotel(finish):
         data.append(i)
-    for i in print_order_reguni(finish):
+    for i in get_order_controller_reguni(finish):
         data.append(i)
-    for i in print_order_tuitionFee(finish):
+    for i in get_order_controller_tuitionFee(finish):
         data.append(i)
-    for i in print_order_cimea(finish):
+    for i in get_order_controller_cimea(finish):
         data.append(i)
-    for i in print_order_appFee(finish):
+    for i in get_order_controller_appFee(finish):
         data.append(i)
-    for i in print_order_tovergata(finish):
+    for i in get_order_controller_tovergata(finish):
         data.append(i)
-    for i in print_order_tolcExam(finish):
+    for i in get_order_controller_tolcExam(finish):
         data.append(i)
 
     return data
 
 
-def update_finish_controller(message,finish):
+def update_finish_controller(message, finish):
     id = int(message.split("\n")[1])
-    print(id)
     table_id = int(message[-2:])
-    print(table_id)
+    
     if table_id == 10 :
         update_finish("buy_currency",finish,"buyCurrencyId",id)
     elif table_id == 11:
