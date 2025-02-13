@@ -2,12 +2,12 @@ from telegram import Update
 from telegram.ext import ContextTypes 
 from create_keyboard import main_menu_keyboard
 from BotStates import States
-
+from controller import insert_or_update_user
 
 
 async def goto_main_menu(update, context, message=None):
     default_message = "خوش آمدید! یک گزینه را انتخاب کنید:"
-
+    insert_or_update_user(update, context)
     if message:
         show_message = message
     else:

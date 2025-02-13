@@ -32,6 +32,11 @@ def get_cimea_speed():
     select_query = "SELECT * FROM cimea_speed"
     return  db.select(select_query)
 
+def get_telUserId():
+    db = Database.get_database()
+    select_query = "SELECT tel_userId FROM user"
+    return  db.select(select_query)
+
 
 
 def get_user_by_id(user_id):

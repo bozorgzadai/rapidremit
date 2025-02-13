@@ -26,13 +26,14 @@ async def goto_admin_menu(update, context, message=None):
 async def admin_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
     if text == "پیام همگانی":
-        # from handlers.italy.italy_main import goto_italy
-        # return await goto_italy(update)
-        pass
+        from handlers.admin.broadcast_message import goto_broacast
+        message = "لطفا متن مورد نظر را وارد نمایید"
+        return await goto_broacast(update,message)
 
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
         return await goto_admin_menu(update, context, message)
+        
     
 
 

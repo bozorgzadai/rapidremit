@@ -2,7 +2,7 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    insert_app_fee, insert_tuition_fee, get_id_by_regTypeName, get_id_by_regCourseLevelName, get_id_by_regCourseLangName,
                    insert_reg_uni, get_id_by_tolcExamTypeName, get_id_by_tolcExamDetailName, insert_cisia_account, insert_tolc_order_exam,
                    get_cisia_account_by_tel_userId, update_cisia_account, insert_torvergata, get_id_by_cimeaTypeName,
-                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, insert_cimea, insert_reserve_hotel,
+                   get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, get_telUserId, insert_cimea, insert_reserve_hotel,
                    get_admin_by_tel_userId,get_buyEuro_admin,
                    get_otherOrder_admin,get_reserveHotel_admin, get_regUni_admin, get_tuitionFee_admin, get_cimea_admin,get_appFee_admin,
                    get_toevergata_admin, get_tolcExam_admin, update_finish)
@@ -50,19 +50,40 @@ def get_cimeaPrice_by_cimeaTypeAndSpeedId_control(cimeaTypeId, cimeaSpeedId):
     keys = list(result[0].keys())
     return result[0][keys[0]], result[0][keys[-1]]
 
-    
+def get_telUserId_control():
+    list_user = []
+    x = get_telUserId()
+    for xx in x:
+        list_user.append(xx['tel_userId'])
+    return list_user
+
+
+async def broadcast_message(context, message):
+    users = get_telUserId()
+    for user_id in users:
+        try:
+            await context.application.bot.send_message(chat_id=user_id["tel_userId"], text=message)
+        except Exception as e:
+            print(f"{user_id},{e}")
+
+
+
 
 def insert_or_update_user(update, context):
     user = get_user_by_id(context._user_id)
+    if not context.user_data.get("contact") and len(user) !=0: # multiple start but no order
+        context.user_data["contact"] = user[0].get("phoneNumber", "No phone number found")
+        context.user_data["id"] = user[0]["userName"]
     if len(user) == 0:
-        insert_user(userId=context._user_id, userName=context.user_data["id"],
+        insert_user(userId=context._user_id, userName=context.user_data.get("id", update.message.from_user.username),
                     userFirstName=update.message.from_user.first_name, userLastName=update.message.from_user.last_name,
-                    phoneNumber=context.user_data["contact"])
+                    phoneNumber=context.user_data.get("contact", " "))
     else:
-        update_user(userId=context._user_id, userName=update.message.from_user.username,
+        update_user(userId=context._user_id, userName=context.user_data.get("id", update.message.from_user.username),
                     userFirstName=update.message.from_user.first_name, userLastName=update.message.from_user.last_name,
-                    phoneNumber=context.user_data["contact"])
+                    phoneNumber=context.user_data.get("contact", " "))
         
+
 
 def insert_or_update_cisia_account(context):
     encrypt_password = encrypting_password(context.user_data["cisia_account_password"])

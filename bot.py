@@ -3,6 +3,7 @@ from BotStates import States, AdminStates
 from config import TOKEN
 from utils import terminate_handler
 from handlers.admin.admin_menu import admin_menu, goto_admin_menu
+from handlers.admin.broadcast_message import broadcast
 from handlers.main_menu import  main_menu, goto_main_menu
 from handlers.buy_euro import buy_euro_amount, buy_euro_contact, buy_euro_id
 from handlers.other_order import others_description, others_amount, others_contact, others_id
@@ -25,6 +26,7 @@ from handlers.italy.exam.torvergata import (reserve_torvergata, reserve_torverga
 
 from handlers.italy.exam.tolc import (italy_reserve_exam_tolc, handle_iolc_x_selection, have_cisia_account, get_cisia_username,
                                       get_cisia_pass, get_exam_date, get_id, get_phone, confirm_payment, payment)
+
 
 
 
@@ -220,6 +222,10 @@ def main():
             AdminStates.ADMIN_MENU: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, admin_menu)
             ],
+            AdminStates.BROADCAST: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, broadcast)
+            ],
+
 
         },
         fallbacks=[MessageHandler(filters.COMMAND, terminate_handler),],
