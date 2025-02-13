@@ -367,7 +367,7 @@ def get_order_controller(finish):
     return data
 
 
-def update_finish_controller(message, finish):
+def update_isfinish_controller(message, finish):
     id = int(message.split("\n")[1])
     table_id = int(message[-2:])
     

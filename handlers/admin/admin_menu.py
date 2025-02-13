@@ -30,15 +30,24 @@ async def admin_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         # return await goto_italy(update)
         pass
     elif text == "سفارش‌های تکمیل نشده":
-        from handlers.admin.unfinish_order import goto_unfinish_order
-        context.user_data["unfinish_order"] = get_order_controller(0)
+        from handlers.admin.isfinish_order import goto_isfinish_order
+        context.user_data["isfinish_order"] = get_order_controller(0)
+        context.user_data["isfinish_bool"] = 0
         context.user_data["order_counter"] = 0
-        return await goto_unfinish_order(update, context)
+        context.user_data["isfinish_order_empty"] = "تمام سفارشات تکمیل شده‌اند."
+        context.user_data["isfinish_order_keyboard"] = "تکمیل شود"
+        context.user_data["isfinish_final_text"] = "به لیست تکمیل‌ها پیوست."
+        return await goto_isfinish_order(update, context)
     
     elif text == "سفارش‌های تکمیل شده":
-        # from handlers.italy.italy_main import goto_italy
-        # return await goto_italy(update)
-        pass
+        from handlers.admin.isfinish_order import goto_isfinish_order
+        context.user_data["isfinish_order"] = get_order_controller(1)
+        context.user_data["isfinish_bool"] = 1
+        context.user_data["order_counter"] = 0
+        context.user_data["isfinish_order_empty"] = "هیچ سفارش تکمیل شده‌ای وجود ندارد."
+        context.user_data["isfinish_order_keyboard"] = "لغو تکمیل"
+        context.user_data["isfinish_final_text"] = "از لیست تکمیل شده‌ها حذف گردید."
+        return await goto_isfinish_order(update, context)
 
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."

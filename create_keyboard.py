@@ -101,19 +101,20 @@ def admin_menu_keyboard() -> ReplyKeyboardMarkup:
     )
 
 
-def unfinish_order_keyboard() -> ReplyKeyboardMarkup:
+def isfinish_order_keyboard(isfinish_text) -> ReplyKeyboardMarkup:
     next_btn = KeyboardButton("بعدی")
     prev_btn = KeyboardButton("قبلی")
-    finish_btn = KeyboardButton("تکمیل شود")
+    isfinish_btn = KeyboardButton(isfinish_text)
     back_btn = KeyboardButton("بازگشت")
     return ReplyKeyboardMarkup(
         [
             [next_btn, prev_btn],
-            [finish_btn],
+            [isfinish_btn],
             [back_btn],
         ],
         resize_keyboard=True,
     )
+
 
 
 
