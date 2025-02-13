@@ -4,6 +4,7 @@ from BotStates import States
 from handlers.main_menu import goto_main_menu
 from handlers.italy.italy_main import goto_italy
 from create_keyboard import back_button_keyboard
+from controller import reserve_hotel_control
 
 
 
@@ -35,13 +36,7 @@ async def italy_reserve_hotel_contact(update: Update, context: ContextTypes.DEFA
         return await goto_italy_reserve_hotel_id(update, context)
 
     context.user_data["contact"] = update.message.text
-    print("Must insert into DB!")
+    reserve_hotel_control(update, context)
     
-    message = """
-    در DB وارد شود
-
-    !!!!!!!!!!!!!!!!
-    !!!!!!!!!!!!!!!!!!!!
-    #################!!!!!!!!!!##########
-    ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت."""
+    message = """ادمین های پرداختی جهت دریافت اطلاعات بیشتر از شما در راستای تکمیل سفارش ارتباط خواهند گرفت."""
     return await goto_main_menu(update, context, message)

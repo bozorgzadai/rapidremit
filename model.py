@@ -111,11 +111,11 @@ def insert_user(userId, userName='', userFirstName='', userLastName='', phoneNum
     db.execute(insert_query, insert_params)
 
 
-def insert_buy_currency(tel_userId, currencyId, value=''):
+def insert_buy_currency(tel_userId, currencyId, value='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO buy_currency(tel_userId, currencyId, value)
-                                    VALUES (%s, %s, %s)"""
-    insert_params = (tel_userId, currencyId, value)
+    insert_query = """INSERT INTO buy_currency(tel_userId, currencyId, value, finish)
+                                    VALUES (%s, %s, %s, %s)"""
+    insert_params = (tel_userId, currencyId, value, finish)
     db.execute(insert_query, insert_params)
 
 
@@ -180,6 +180,14 @@ def insert_cimea(tel_userId, cimeaPriceId='', trans_filepath='', finish=''):
     insert_query = """INSERT INTO cimea(tel_userId, cimeaPriceId, trans_filepath, finish)
                                     VALUES (%s, %s, %s, %s)"""
     insert_params = (tel_userId, cimeaPriceId, trans_filepath, finish)
+    db.execute(insert_query, insert_params)
+
+
+def insert_reserve_hotel(tel_userId, finish=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO reserve_hotel(tel_userId, finish)
+                                    VALUES (%s, %s)"""
+    insert_params = (tel_userId, finish)
     db.execute(insert_query, insert_params)
 
 
