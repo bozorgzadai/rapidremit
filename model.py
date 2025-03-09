@@ -203,10 +203,6 @@ def get_tuitionFee_admin(finish):
                     u.phoneNumber,
                     university,
                     degree,
-                    euroAmount,
-                    euroPrice,
-                    rial_change,
-                    trans_filepath,
                     time
         FROM tuition_fee tf inner join user u on tf.tel_userId = u.tel_userId 
         where finish=%s;
@@ -343,12 +339,11 @@ def insert_app_fee(tel_userId, university='', degree='', euroAmount='', euroPric
     insert_params = (tel_userId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
     db.execute(insert_query, insert_params)
 
-
-def insert_tuition_fee(tel_userId, university='', degree='', euroAmount='', euroPrice='', rialChange='', trans_filepath='', finish=''):
+def insert_tuition_fee(tel_userId, university='', degree='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO tuition_fee(tel_userId, university, degree, euroAmount, euroPrice, rial_change, trans_filepath, finish)
-                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
+    insert_query = """INSERT INTO tuition_fee(tel_userId, university, degree, finish)
+                                    VALUES (%s, %s, %s, %s)"""
+    insert_params = (tel_userId, university, degree, finish)
     db.execute(insert_query, insert_params)
 
 

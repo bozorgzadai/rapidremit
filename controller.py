@@ -118,8 +118,7 @@ def app_fee_control(update, context):
 def tuition_fee_control(update, context):
     insert_or_update_user(update, context)
     insert_tuition_fee(context._user_id, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
-                   euroAmount=context.user_data["app_fee_euro_amount"], euroPrice=context.user_data["app_fee_euro_price"],
-                   rialChange=context.user_data["app_fee_rial"], trans_filepath=context.user_data["app_fee_trans_filepath"], finish=0)
+                        finish=0)
     
 def reg_uni_control(update, context):
     insert_or_update_user(update, context)
@@ -250,12 +249,8 @@ def get_order_controller_tuitionFee(finish):
             f"📞تلفن:\n{item['phoneNumber']}\n\n"
             f"🏛دانشگاه:\n{item['university']}\n\n"
             f"🎓مدرک تحصیلی:\n{item['degree']}\n\n"
-            f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
-            f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
-            f"💰مبلغ نهایی (ریال):\n{item['rial_change']}\n\n"
-            f"result14",
-            item['trans_filepath'],  # Transaction file in the second field of tuple
             "app_and_tuition_fee",
+            None
         )
         for item in data
     ]
@@ -304,7 +299,7 @@ def get_order_controller_appFee(finish):
         f"🎓مدرک تحصیلی:\n{item['degree']}\n\n"
         f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
         f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
-        f"💰مبلغ نهایی (ریال):\n{item['rialchange']}\n\n"
+        f"💰مبلغ نهایی (تومان):\n{item['rialchange']}\n\n"
         f"result16",
         item['trans_filepath'],  # Transaction file in second field of tuple
         "app_and_tuition_fee",

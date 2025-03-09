@@ -9,7 +9,7 @@ from create_keyboard import (reply_keyboard_tolc_exam_type, reply_keyboard_tolc_
 
 from controller import (get_id_by_tolcExamTypeName_control, get_id_by_tolcExamDetailName_control,
                         insert_or_update_cisia_account, tolc_order_exam_control)
-
+from utils import get_euro_to_toman_exchange_rate_api, save_transaction_image
 
 
 
@@ -190,8 +190,10 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def goto_confirm_payment(update, message=None):
-    exam_fee = "1000000"  # هزینه به تومان
-    default_message = f"""داوطلب گرامی هزینه شرکت در آزمون فلان {exam_fee} تومان می‌باشد.\n
+    torvergata_euro_amount= 35
+    euro_price, unit = await get_euro_to_toman_exchange_rate_api()
+    exam_fee = int(torvergata_euro_amount  * euro_price + 480000)
+    default_message = f"""داوطلب گرامی هزینه شرکت در آزمون  {exam_fee} تومان می‌باشد.\n
         اگر صحت اطلاعات خود و موجودی ظرفیت در روز درخواستی اطلاع دارید با استفاده از گزینه پرداخت درخواست خود را تکمیل کنید.
         """
     
@@ -222,7 +224,10 @@ async def confirm_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 async def goto_payment(update, message=None):
-    default_message = "لطفا هزینه درخواست جاری خود را به شماره کارت فلان واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید"
+    card_number = "5022-2913-3054-7298\nنیما فتوکیان"
+
+    default_message = f"""لطفا جهت پرداخت هزینه مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
+        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
 
     if message:
         show_message = message

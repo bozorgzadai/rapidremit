@@ -21,15 +21,15 @@ async def goto_main_menu(update, context, message=None):
 
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     text = update.message.text
-    if text == "Italy":
+    if text == "\U0001F1EE\U0001F1F9 Italy":
         from handlers.italy.italy_main import goto_italy
         return await goto_italy(update)
     
-    elif text == "خرید یورو":
+    elif text == "خرید یورو \U0001F4B2":
         from handlers.buy_euro import goto_buy_euro
         return await goto_buy_euro(update)
     
-    elif text == "موارد دیگر":
+    elif text == "others":
         from handlers.other_order import goto_others
         return await goto_others(update)
     

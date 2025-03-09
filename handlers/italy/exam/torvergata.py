@@ -6,6 +6,7 @@ from utils import save_transaction_image
 from handlers.italy.exam.exam_main import goto_italy_reserve_exam
 from create_keyboard import back_button_keyboard, pay_cancel_keyboard
 from controller import torvergata_control
+from utils import get_euro_to_toman_exchange_rate_api, save_transaction_image
 
 
 
@@ -45,7 +46,13 @@ async def reserve_torvergata_contact(update: Update, context: ContextTypes.DEFAU
     
 
 async def goto_reserve_torvergata(update, message=None):
-    default_message = "داوطلب گرامی هزینه شرکت در آزمون داروسازی تورورگاتا (کورس انگلیسی داروسازی) 1000 ریال می‌باشد اگر قصد تکمیل خرید خود را دارید با استفاده از گزینه پرداخت ادامه دهید"
+    torvergata_euro_amount= 32
+    euro_price, unit = await get_euro_to_toman_exchange_rate_api()
+    amount_rial = int(torvergata_euro_amount  * euro_price + 480000)
+
+
+
+    default_message = f"داوطلب گرامی هزینه شرکت در آزمون داروسازی تورورگاتا (کورس انگلیسی داروسازی) {amount_rial} تومان می‌باشد اگر قصد تکمیل خرید خود را دارید با استفاده از گزینه پرداخت ادامه دهید"
 
     if message:
         show_message = message
@@ -73,7 +80,10 @@ async def reserve_torvergata(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 async def goto_handle_payment_receipt(update, message=None):
-    default_message = "لطفا هزینه درخواست جاری خود را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید."
+    card_number = "5022-2913-3054-7298\nنیما فتوکیان"
+
+    default_message = f"""لطفا جهت پرداخت هزینه مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
+        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
 
     if message:
         show_message = message

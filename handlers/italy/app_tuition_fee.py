@@ -74,7 +74,16 @@ async def italy_app_fee_contact(update: Update, context: ContextTypes.DEFAULT_TY
         return await goto_italy_app_fee_tgid(update)
 
     context.user_data["contact"] = text
-    return await goto_italy_app_fee_amount(update)
+    if context.user_data["is_app_fee"]:
+            return await goto_italy_app_fee_amount(update)
+    else:
+        tuition_fee_control(update, context)
+
+        message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. 
+            ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
+        return await goto_main_menu(update, context, message)
+        
+    
     
     
 
@@ -107,7 +116,7 @@ async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYP
         context.user_data["app_fee_euro_amount"] = amount_eur
         euro_price, unit = await get_euro_to_toman_exchange_rate_api()
         context.user_data["app_fee_euro_price"] = euro_price
-        amount_rial = int(amount_eur * euro_price * 10)
+        amount_rial = int(amount_eur * 1.25 * euro_price)
         context.user_data["app_fee_rial"] = amount_rial
 
         return await goto_italy_app_fee_confirm(update, context)
@@ -154,10 +163,10 @@ async def italy_app_fee_confirm(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 async def goto_italy_app_fee_receipt(update, context, message=None):
-    card_number = "9876-5432-1098-7654"
+    card_number = "5022-2913-3054-7298\nنیما فتوکیان"
     amount_rial = context.user_data["app_fee_rial"]
 
-    default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} ریال، مبلغ مذکور را به شماره کارت {card_number} واریز نمایید.\n
+    default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} تومان، مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
         سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
 
     if message:

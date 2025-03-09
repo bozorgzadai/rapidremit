@@ -74,15 +74,14 @@ def back_button_keyboard() -> ReplyKeyboardMarkup:
 
 
 def main_menu_keyboard() -> ReplyKeyboardMarkup:
-    italy_btn = KeyboardButton("Italy")
-    buy_euro_btn = KeyboardButton("خرید یورو")
-    others_btn = KeyboardButton("موارد دیگر")
-    prev_orders_btn = KeyboardButton("تکمیل سفارشات قبلی")
+    italy_btn = KeyboardButton("\U0001F1EE\U0001F1F9 Italy")
+    buy_euro_btn = KeyboardButton("خرید یورو \U0001F4B2")
+
+    others_btn = KeyboardButton("others")
     return ReplyKeyboardMarkup(
         [
             [italy_btn],
             [buy_euro_btn, others_btn],
-            [prev_orders_btn],
         ],
         resize_keyboard=True,
     )

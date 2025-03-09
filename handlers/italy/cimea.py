@@ -7,6 +7,8 @@ from handlers.italy.italy_main import goto_italy
 from create_keyboard import back_button_keyboard, reply_keyboard_cimea_type, reply_keyboard_cimea_speed, pay_cancel_keyboard
 from controller import (cimea_control, get_id_by_cimeaTypeName_control, get_id_by_cimeaSpeedName_control,
                         get_cimeaPrice_by_cimeaTypeAndSpeedId_control)
+from utils import get_euro_to_toman_exchange_rate_api, save_transaction_image
+
 
 
 
@@ -55,8 +57,16 @@ async def italy_cimea_speed(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 async def goto_italy_cimea_confirm(update, context, message=None):
-    price = context.user_data["cimea_price"]
-    default_message = f"با توجه به اطلاعات وارده هزینه درخواست جاری {price} ریال می‌باشد. آیا مایل به ادامه ی درخواست خود هستید؟"
+    euro_price, unit = await get_euro_to_toman_exchange_rate_api()
+    
+
+
+    if context.user_data["cimea_speed_id"] == 1:
+        price = int(152  * euro_price + 1300000)
+    else:
+        price = int(252  * euro_price + 2000000)
+    context.user_data["cimea_price"] = price
+    default_message = f"با توجه به اطلاعات وارده هزینه درخواست جاری {price} تومان می‌باشد. آیا مایل به ادامه ی درخواست خود هستید؟"
 
     if message:
         show_message = message
@@ -122,8 +132,11 @@ async def italy_cimea_receive_phone(update: Update, context: ContextTypes.DEFAUL
 
 
 async def goto_italy_cimea_receipt(update, context, message=None):
-    price = context.user_data["cimea_price"]
-    default_message = f"لطفا جهت پرداخت درخواست جاری به مبلغ {price} ریال، هزینه مذکور را به شماره کارت 1234-5678-9012-3456 واریز نمایید و فیش پرداختی خود را در ربات ارسال نمایید."
+    card_number = "5022-2913-3054-7298\nنیما فتوکیان"
+    amount_rial = context.user_data["cimea_price"]
+
+    default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} تومان، مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
+        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
 
     if message:
         show_message = message
