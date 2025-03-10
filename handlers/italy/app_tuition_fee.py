@@ -127,10 +127,7 @@ async def italy_app_fee_amount(update: Update, context: ContextTypes.DEFAULT_TYP
 
 async def goto_italy_app_fee_confirm(update, context, message=None):
     amount_rial = context.user_data["app_fee_rial"]
-    default_message = f"""
-                        با توجه به اطلاعات وارده، هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\n
-                            جهت ادامه، یکی از گزینه‌های زیر را انتخاب کنید:
-                        """
+    default_message = f"""با توجه به اطلاعات وارده، هزینه‌ی درخواست جاری {amount_rial} ریال می‌باشد.\nجهت ادامه، یکی از گزینه‌های زیر را انتخاب کنید:"""
     if message:
         show_message = message
     else:
@@ -167,7 +164,7 @@ async def goto_italy_app_fee_receipt(update, context, message=None):
     amount_rial = context.user_data["app_fee_rial"]
 
     default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} تومان، مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
-        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
+سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
 
     if message:
         show_message = message

@@ -83,7 +83,7 @@ async def goto_handle_payment_receipt(update, message=None):
     card_number = "5022-2913-3054-7298\nنیما فتوکیان"
 
     default_message = f"""لطفا جهت پرداخت هزینه مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
-        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
+سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
 
     if message:
         show_message = message

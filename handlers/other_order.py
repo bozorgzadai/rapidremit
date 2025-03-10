@@ -82,7 +82,7 @@ async def others_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     context.user_data["id"] = text
     other_order_control(update, context)
 
-    message = "سفارش شما ثبت شد. ادمین به زودی با شما تماس خواهد گرفت."
+    message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
     return await goto_main_menu(update, context, message)
 
 

@@ -136,7 +136,8 @@ async def goto_italy_cimea_receipt(update, context, message=None):
     amount_rial = context.user_data["cimea_price"]
 
     default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} تومان، مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
-        سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
+سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
+
 
     if message:
         show_message = message
@@ -160,6 +161,8 @@ async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
         return await goto_main_menu(update, context, message)
+    elif update.message.text  ==  "بازگشت":
+        return await italy_cimea_receive_phone(update, context)
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
         return await goto_italy_cimea_receipt(update, context, message)
