@@ -152,7 +152,10 @@ async def goto_italy_cimea_receipt(update, context, message=None):
 
 
 async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    if update.message.photo:
+    if update.message.text  ==  "بازگشت":
+        return await goto_italy_cimea_receive_phone(update)
+    
+    elif update.message.photo:
         save_directory = "saved_photo/cimea"
         filename = await save_transaction_image(update, context, save_directory)
         context.user_data["cimea_trans_filepath"] = filename
@@ -161,8 +164,7 @@ async def italy_cimea_receipt(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         message = "کاربر گرامی درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."
         return await goto_main_menu(update, context, message)
-    elif update.message.text  ==  "بازگشت":
-        return await italy_cimea_receive_phone(update, context)
+    
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."
         return await goto_italy_cimea_receipt(update, context, message)
