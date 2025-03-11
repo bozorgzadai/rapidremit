@@ -228,8 +228,8 @@ def get_cimea_admin(finish):
         FROM cimea c
         INNER JOIN user u ON u.tel_userId = c.tel_userId
         INNER JOIN cimea_price cp ON cp.cimeaPriceId = c.cimeaPriceId
-        INNER JOIN cimea_Type ct ON ct.cimeaTypeid = cp.cimeaTypeId
-        INNER JOIN cimea_Speed cpi ON cpi.cimeaSpeedId = cp.cimeaSpeedId
+        INNER JOIN cimea_type ct ON ct.cimeaTypeid = cp.cimeaTypeId
+        INNER JOIN cimea_speed cpi ON cpi.cimeaSpeedId = cp.cimeaSpeedId
         WHERE c.finish = %s;
     """
     select_params = (finish,)
