@@ -134,7 +134,10 @@ def tolc_order_exam_control(update, context):
     
 def torvergata_control(update, context):
     insert_or_update_user(update, context)
-    insert_torvergata(context._user_id, trans_filepath=context.user_data["torvergata_trans_filepath"], finish=0)
+    insert_torvergata(context._user_id, euroAmount=context.user_data["torvergata_euro_amount"],
+                      euroPrice=context.user_data["torvergata_euro_price"],
+                      rial=context.user_data["torvergata_rial"],
+                      trans_filepath=context.user_data["torvergata_trans_filepath"], finish=0)
 
 def cimea_control(update, context):
     insert_or_update_user(update, context)
@@ -325,6 +328,9 @@ def get_order_controller_tovergata(finish):
             f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
             f"🏷نام کاربری:\n{item['userName']}\n\n"
             f"📞تلفن:\n{item['phoneNumber']}\n\n"
+            f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
+            f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
+            f"💰مبلغ نهایی (تومان):\n{item['rial']}\n\n"
             f"result17",
             item['trans_filepath'],  # Transaction file in second field of tuple
             "torvergata",

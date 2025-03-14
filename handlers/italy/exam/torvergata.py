@@ -41,16 +41,18 @@ async def reserve_torvergata_contact(update: Update, context: ContextTypes.DEFAU
         return await goto_reserve_torvergata_id(update)
     
     context.user_data["contact"] = text
-    return await goto_reserve_torvergata(update)
+    return await goto_reserve_torvergata(update, context)
 
     
 
-async def goto_reserve_torvergata(update, message=None):
-    torvergata_euro_amount= 32
+async def goto_reserve_torvergata(update, context, message=None):
+    torvergata_euro_amount = 32
     euro_price, unit = await get_euro_to_toman_exchange_rate_api()
-    amount_rial = int(torvergata_euro_amount  * euro_price + 480000)
+    amount_rial = int(torvergata_euro_amount * euro_price + 480000)
 
-
+    context.user_data["torvergata_euro_amount"] = torvergata_euro_amount
+    context.user_data["torvergata_euro_price"] = euro_price
+    context.user_data["torvergata_rial"] = amount_rial
 
     default_message = f"داوطلب گرامی هزینه شرکت در آزمون داروسازی تورورگاتا (کورس انگلیسی داروسازی) {amount_rial} تومان می‌باشد اگر قصد تکمیل خرید خود را دارید با استفاده از گزینه پرداخت ادامه دهید"
 
@@ -75,7 +77,7 @@ async def reserve_torvergata(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return await goto_handle_payment_receipt(update)
     else: 
         message = "لطفا یکی از گزینه‌های زیر را انتخاب کنید:"
-        return await goto_reserve_torvergata(update, message)
+        return await goto_reserve_torvergata(update, context, message)
 
 
 
@@ -108,7 +110,7 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
         return await goto_main_menu(update, context, message)
     
     elif update.message.text=="بازگشت":
-        return await goto_reserve_torvergata(update)
+        return await goto_reserve_torvergata(update, context)
     
     else:
         message = "لطفا یک تصویر از فیش پرداختی خود ارسال کنید."

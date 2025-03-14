@@ -263,6 +263,9 @@ def get_toevergata_admin(finish):
     select_query = """
         SELECT 
             t.torvergataId, 
+            t.euroAmount, 
+            t.euroPrice, 
+            t.rial, 
             u.userFirstName, 
             u.userLastName, 
             u.userName, 
@@ -373,11 +376,11 @@ def insert_cisia_account(tel_userId, username='', password=''):
     db.execute(insert_query, insert_params)
 
 
-def insert_torvergata(tel_userId, trans_filepath='', finish=''):
+def insert_torvergata(tel_userId, euroAmount='', euroPrice='', rial='', trans_filepath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO torvergata(tel_userId, trans_filepath, finish)
-                                    VALUES (%s, %s, %s)"""
-    insert_params = (tel_userId, trans_filepath, finish)
+    insert_query = """INSERT INTO torvergata(tel_userId, euroAmount, euroPrice, rial, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, euroAmount, euroPrice, rial, trans_filepath, finish)
     db.execute(insert_query, insert_params)
 
 
