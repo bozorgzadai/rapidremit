@@ -79,8 +79,7 @@ async def italy_app_fee_contact(update: Update, context: ContextTypes.DEFAULT_TY
     else:
         tuition_fee_control(update, context)
 
-        message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. 
-            ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
+        message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
         return await goto_main_menu(update, context, message)
         
     
@@ -191,8 +190,7 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
         else:
             tuition_fee_control(update, context)
 
-        message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. 
-            ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
+        message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
         return await goto_main_menu(update, context, message)
     else:
         message = "لطفا یک عکس از فیش پرداختی خود ارسال کنید."
