@@ -221,6 +221,8 @@ def get_cimea_admin(finish):
             u.userName, 
             u.phoneNumber, 
             cp.cimeaPrice, 
+            c.cimeaEuroPrice, 
+            c.cimeaRial, 
             c.trans_filepath, 
             c.time, 
             cpi.cimeaSpeedName, 
@@ -379,11 +381,11 @@ def insert_torvergata(tel_userId, trans_filepath='', finish=''):
     db.execute(insert_query, insert_params)
 
 
-def insert_cimea(tel_userId, cimeaPriceId='', trans_filepath='', finish=''):
+def insert_cimea(tel_userId, cimeaPriceId='', cimeaEuroPrice='', cimeaRial='', trans_filepath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO cimea(tel_userId, cimeaPriceId, trans_filepath, finish)
-                                    VALUES (%s, %s, %s, %s)"""
-    insert_params = (tel_userId, cimeaPriceId, trans_filepath, finish)
+    insert_query = """INSERT INTO cimea(tel_userId, cimeaPriceId, cimeaEuroPrice, cimeaRial, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, cimeaPriceId, cimeaEuroPrice, cimeaRial, trans_filepath, finish)
     db.execute(insert_query, insert_params)
 
 

@@ -139,6 +139,7 @@ def torvergata_control(update, context):
 def cimea_control(update, context):
     insert_or_update_user(update, context)
     insert_cimea(context._user_id, cimeaPriceId=context.user_data["cimea_price_id"],
+                 cimeaEuroPrice=context.user_data["cimea_euro_price"], cimeaRial=context.user_data["cimea_rial"],
                  trans_filepath=context.user_data["cimea_trans_filepath"], finish=0)
 
 def reserve_hotel_control(update, context):
@@ -270,7 +271,9 @@ def get_order_controller_cimea(finish):
         f"👤نام:\n{item['userFirstName']} {item['userLastName'] if item['userLastName'] else 'نامشخص'}\n\n"
         f"🏷نام کاربری:\n{item['userName']}\n\n"
         f"📞تلفن:\n{item['phoneNumber']}\n\n"
-        f"💰قیمت:\n{item['cimeaPrice']} \n\n"
+        f"💶مقدار یورو:\n{item['cimeaPrice']}\n\n"
+        f"💱قیمت یورو:\n{item['cimeaEuroPrice']}\n\n"
+        f"💰مبلغ نهایی (تومان):\n{item['cimeaRial']}\n\n"
         f"🚀سرعت بررسی:\n{item['cimeaSpeedName']}\n\n"
         f"📄نوع مقایسه:\n{item['cimeaTypeName']}\n\n"
         f"result15",

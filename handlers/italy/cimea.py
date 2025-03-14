@@ -47,25 +47,20 @@ async def italy_cimea_speed(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     context.user_data["cimea_speed_id"] = get_id_by_cimeaSpeedName_control(text)
     cimeaTypeId = context.user_data["cimea_type_id"]
     cimeaSpeedId = context.user_data["cimea_speed_id"]
-    cimeaPriceId, cimeaPrice = get_cimeaPrice_by_cimeaTypeAndSpeedId_control(cimeaTypeId, cimeaSpeedId)
+    cimeaPriceId, cimeaBasePrice = get_cimeaPrice_by_cimeaTypeAndSpeedId_control(cimeaTypeId, cimeaSpeedId)
 
     context.user_data["cimea_price_id"] = cimeaPriceId
-    context.user_data["cimea_price"] = cimeaPrice
+    euro_price, unit = await get_euro_to_toman_exchange_rate_api()
+    context.user_data["cimea_euro_price"] = euro_price
+    amount_rial = int(cimeaBasePrice  * euro_price + 1300000)
+    context.user_data["cimea_rial"] = amount_rial
     return await goto_italy_cimea_confirm(update, context)
     
     
 
 
 async def goto_italy_cimea_confirm(update, context, message=None):
-    euro_price, unit = await get_euro_to_toman_exchange_rate_api()
-    
-
-
-    if context.user_data["cimea_speed_id"] == 1:
-        price = int(152  * euro_price + 1300000)
-    else:
-        price = int(252  * euro_price + 2000000)
-    context.user_data["cimea_price"] = price
+    price = context.user_data["cimea_rial"]
     default_message = f"با توجه به اطلاعات وارده هزینه درخواست جاری {price} تومان می‌باشد. آیا مایل به ادامه ی درخواست خود هستید؟"
 
     if message:
@@ -133,7 +128,7 @@ async def italy_cimea_receive_phone(update: Update, context: ContextTypes.DEFAUL
 
 async def goto_italy_cimea_receipt(update, context, message=None):
     card_number = "5022-2913-3054-7298\nنیما فتوکیان"
-    amount_rial = context.user_data["cimea_price"]
+    amount_rial = context.user_data["cimea_rial"]
 
     default_message = f"""لطفا جهت پرداخت هزینه {amount_rial} تومان، مبلغ مذکور را به شماره کارت\n {card_number}\n واریز نمایید.\n
 سپس فیش پرداختی خود را در همین ربات ارسال کنید (عکس فیش را بفرستید)."""
