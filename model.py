@@ -39,6 +39,7 @@ def get_telUserId():
 
 
 
+
 def get_user_by_id(user_id):
     db = Database.get_database()
     select_query = "SELECT * FROM user WHERE tel_userId = %s"
@@ -111,6 +112,19 @@ def get_admin_by_tel_userId(tel_userId):
     select_params = (tel_userId,)
     return db.select(select_query, select_params)
 
+def get_orders_type_by_type(type):
+    db = Database.get_database()
+    select_query = "SELECT * FROM orders_type WHERE type = %s"
+    select_params = (type,)
+    return db.select(select_query, select_params)
+
+def get_orders_desc_by_ordersTypeId(ordersTypeId):
+    db = Database.get_database()
+    select_query = """SELECT * FROM orders WHERE ordersTypeId = %s
+                        ORDER BY ordersId DESC"""
+    select_params = (ordersTypeId,)
+    return db.select(select_query, select_params)
+
 
 
 
@@ -118,7 +132,7 @@ def get_buyEuro_admin(finish):
     db = Database.get_database()
     select_query = """
         SELECT 
-            bc.buyCurrencyId, bc.time, bc.value, 
+            bc.buyCurrencyId, bc.ordersId, bc.time, bc.value, 
             u.userFirstName, u.userLastName, u.userName, u.phoneNumber, 
             c.currency_name 
         FROM buy_currency AS bc
@@ -135,6 +149,7 @@ def get_otherOrder_admin(finish):
     select_query = """
         SELECT 
             o.orderOtherId, 
+            o.ordersId, 
             u.userFirstName, 
             u.userLastName, 
             u.userName, 
@@ -154,6 +169,7 @@ def get_reserveHotel_admin(finish):
     select_query = """
         SELECT 
             o.reserveHotelID, 
+            o.ordersId, 
             u.userFirstName, 
             u.userLastName, 
             u.userName, 
@@ -171,6 +187,7 @@ def get_regUni_admin(finish):
     select_query = """
         SELECT 
             ru.regUniId,
+            ru.ordersId,
             u.userFirstName, 
             u.userLastName, 
             u.userName, 
@@ -197,7 +214,9 @@ def get_regUni_admin(finish):
 def get_tuitionFee_admin(finish):
     db = Database.get_database()
     select_query = """
-        SELECT tf.tuitionFeeId,u.userFirstName, 
+        SELECT tf.tuitionFeeId,
+                    tf.ordersId, 
+                    u.userFirstName, 
                     u.userLastName, 
                     u.userName, 
                     u.phoneNumber,
@@ -216,6 +235,7 @@ def get_cimea_admin(finish):
     select_query = """
         SELECT 
             c.cimeaId, 
+            c.ordersId, 
             u.userFirstName, 
             u.userLastName, 
             u.userName, 
@@ -241,7 +261,9 @@ def get_cimea_admin(finish):
 def get_appFee_admin(finish):
     db = Database.get_database()
     select_query = """
-        SELECT tf.appFeeId,u.userFirstName, 
+        SELECT tf.appFeeId,
+                    tf.ordersId, 
+                    u.userFirstName, 
                     u.userLastName, 
                     u.userName, 
                     u.phoneNumber,
@@ -263,6 +285,7 @@ def get_toevergata_admin(finish):
     select_query = """
         SELECT 
             t.torvergataId, 
+            t.ordersId, 
             t.euroAmount, 
             t.euroPrice, 
             t.rial, 
@@ -284,6 +307,7 @@ def get_tolcExam_admin(finish):
     select_query = """
     SELECT  
         toe.tolcOrderExamId,
+        toe.ordersId,
         toe.euroAmount,
         toe.euroPrice,
         toe.rial_change,
@@ -313,9 +337,6 @@ def get_tolcExam_admin(finish):
 
 
 
-
-
-
 def insert_user(userId, userName='', userFirstName='', userLastName='', phoneNumber='', birthDate='', passport_photo=''):
     db = Database.get_database()
     insert_query = """INSERT INTO user(tel_userId, userName, userFirstName, userLastName, phoneNumber, birthDate, passport_photo)
@@ -324,52 +345,52 @@ def insert_user(userId, userName='', userFirstName='', userLastName='', phoneNum
     db.execute(insert_query, insert_params)
 
 
-def insert_buy_currency(tel_userId, currencyId, value='', finish=''):
+def insert_buy_currency(tel_userId, ordersId, currencyId, value='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO buy_currency(tel_userId, currencyId, value, finish)
-                                    VALUES (%s, %s, %s, %s)"""
-    insert_params = (tel_userId, currencyId, value, finish)
+    insert_query = """INSERT INTO buy_currency(tel_userId, ordersId, currencyId, value, finish)
+                                    VALUES (%s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, currencyId, value, finish)
     db.execute(insert_query, insert_params)
 
 
-def insert_other_order(tel_userId, description='', price='', finish=''):
+def insert_other_order(tel_userId, ordersId, description='', price='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO order_other(tel_userId, description, price, finish)
-                                    VALUES (%s, %s, %s, %s)"""
-    insert_params = (tel_userId, description, price, finish)
+    insert_query = """INSERT INTO order_other(tel_userId, ordersId, description, price, finish)
+                                    VALUES (%s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, description, price, finish)
     db.execute(insert_query, insert_params)
 
 
-def insert_app_fee(tel_userId, university='', degree='', euroAmount='', euroPrice='', rialChange='', trans_filepath='', finish=''):
+def insert_app_fee(tel_userId, ordersId, university='', degree='', euroAmount='', euroPrice='', rialChange='', trans_filepath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO app_fee(tel_userId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
+    insert_query = """INSERT INTO app_fee(tel_userId, ordersId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
+    db.execute(insert_query, insert_params)
+
+def insert_tuition_fee(tel_userId, ordersId, university='', degree='', finish=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO tuition_fee(tel_userId, ordersId, university, degree, finish)
+                                    VALUES (%s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, university, degree, finish)
+    db.execute(insert_query, insert_params)
+
+
+def insert_reg_uni(tel_userId, ordersId, regTypeId='', regCourseLevelId='', regCourseLangId='', uniName='', courseName='', finish=''):
+    db = Database.get_database()
+    insert_query = """INSERT INTO reg_uni(tel_userId, ordersId, regTypeId, regCourseLevelId, regCourseLangId, uniName, courseName, finish)
                                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, university, degree, euroAmount, euroPrice, rialChange, trans_filepath, finish)
-    db.execute(insert_query, insert_params)
-
-def insert_tuition_fee(tel_userId, university='', degree='', finish=''):
-    db = Database.get_database()
-    insert_query = """INSERT INTO tuition_fee(tel_userId, university, degree, finish)
-                                    VALUES (%s, %s, %s, %s)"""
-    insert_params = (tel_userId, university, degree, finish)
+    insert_params = (tel_userId, ordersId, regTypeId, regCourseLevelId, regCourseLangId, uniName, courseName, finish)
     db.execute(insert_query, insert_params)
 
 
-def insert_reg_uni(tel_userId, regTypeId='', regCourseLevelId='', regCourseLangId='', uniName='', courseName='', finish=''):
-    db = Database.get_database()
-    insert_query = """INSERT INTO reg_uni(tel_userId, regTypeId, regCourseLevelId, regCourseLangId, uniName, courseName, finish)
-                                    VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, regTypeId, regCourseLevelId, regCourseLangId, uniName, courseName, finish)
-    db.execute(insert_query, insert_params)
-
-
-def insert_tolc_order_exam(tel_userId, tolcExamDetailId='', euroAmount='', euroPrice='', rial_change='',
+def insert_tolc_order_exam(tel_userId, ordersId, tolcExamDetailId='', euroAmount='', euroPrice='', rial_change='',
                            examDate='', trans_filePath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO tolc_order_exam(tel_userId, tolcExamDetailId, euroAmount, euroPrice, rial_change,
+    insert_query = """INSERT INTO tolc_order_exam(tel_userId, ordersId, tolcExamDetailId, euroAmount, euroPrice, rial_change,
                                                     examDate, trans_filePath, finish)
-                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, tolcExamDetailId, euroAmount, euroPrice, rial_change, examDate, trans_filePath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, tolcExamDetailId, euroAmount, euroPrice, rial_change, examDate, trans_filePath, finish)
     db.execute(insert_query, insert_params)
 
 
@@ -381,27 +402,35 @@ def insert_cisia_account(tel_userId, username='', password=''):
     db.execute(insert_query, insert_params)
 
 
-def insert_torvergata(tel_userId, euroAmount='', euroPrice='', rial='', trans_filepath='', finish=''):
+def insert_torvergata(tel_userId, ordersId, euroAmount='', euroPrice='', rial='', trans_filepath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO torvergata(tel_userId, euroAmount, euroPrice, rial, trans_filepath, finish)
-                                    VALUES (%s, %s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, euroAmount, euroPrice, rial, trans_filepath, finish)
+    insert_query = """INSERT INTO torvergata(tel_userId, ordersId, euroAmount, euroPrice, rial, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, euroAmount, euroPrice, rial, trans_filepath, finish)
     db.execute(insert_query, insert_params)
 
 
-def insert_cimea(tel_userId, cimeaPriceId='', cimeaEuroPrice='', cimeaRial='', trans_filepath='', finish=''):
+def insert_cimea(tel_userId, ordersId, cimeaPriceId='', cimeaEuroPrice='', cimeaRial='', trans_filepath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO cimea(tel_userId, cimeaPriceId, cimeaEuroPrice, cimeaRial, trans_filepath, finish)
-                                    VALUES (%s, %s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, cimeaPriceId, cimeaEuroPrice, cimeaRial, trans_filepath, finish)
+    insert_query = """INSERT INTO cimea(tel_userId, ordersId, cimeaPriceId, cimeaEuroPrice, cimeaRial, trans_filepath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, cimeaPriceId, cimeaEuroPrice, cimeaRial, trans_filepath, finish)
     db.execute(insert_query, insert_params)
 
 
-def insert_reserve_hotel(tel_userId, finish=''):
+def insert_reserve_hotel(tel_userId, ordersId, finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO reserve_hotel(tel_userId, finish)
-                                    VALUES (%s, %s)"""
-    insert_params = (tel_userId, finish)
+    insert_query = """INSERT INTO reserve_hotel(tel_userId, ordersId, finish)
+                                    VALUES (%s, %s, %s)"""
+    insert_params = (tel_userId, ordersId, finish)
+    db.execute(insert_query, insert_params)
+
+
+def insert_orders(ordersTypeId):
+    db = Database.get_database()
+    insert_query = """INSERT INTO orders(ordersTypeId)
+                                    VALUES (%s)"""
+    insert_params = (ordersTypeId,)
     db.execute(insert_query, insert_params)
 
 

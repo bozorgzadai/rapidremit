@@ -5,7 +5,8 @@ from model import (get_user_by_id, insert_user, update_user, insert_buy_currency
                    get_id_by_cimeaSpeedName, get_cimeaPrice_by_cimeaTypeAndSpeedId, get_telUserId, insert_cimea, insert_reserve_hotel,
                    get_admin_by_tel_userId,get_buyEuro_admin,
                    get_otherOrder_admin,get_reserveHotel_admin, get_regUni_admin, get_tuitionFee_admin, get_cimea_admin,get_appFee_admin,
-                   get_toevergata_admin, get_tolcExam_admin, update_finish)
+                   get_toevergata_admin, get_tolcExam_admin, update_finish, get_orders_type_by_type, insert_orders,
+                   get_orders_desc_by_ordersTypeId)
 
 from encrypt.password_encryption import encrypting_password,decrypting_password
 
@@ -45,6 +46,11 @@ def get_id_by_cimeaSpeedName_control(cimeaSpeedName):
     key = list(result[0].keys())[0]
     return result[0][key]
 
+def get_id_by_ordersType_control(ordersType):
+    result = get_orders_type_by_type(ordersType)
+    key = list(result[0].keys())[0]
+    return result[0][key]
+
 def get_cimeaPrice_by_cimeaTypeAndSpeedId_control(cimeaTypeId, cimeaSpeedId):
     result = get_cimeaPrice_by_cimeaTypeAndSpeedId(cimeaTypeId, cimeaSpeedId)
     keys = list(result[0].keys())
@@ -56,6 +62,15 @@ def get_telUserId_control():
     for xx in x:
         list_user.append(xx['tel_userId'])
     return list_user
+
+def insert_and_get_ordersId(ordersType):
+    ordersTypeId = get_id_by_ordersType_control(ordersType)
+    insert_orders(ordersTypeId)
+    result = get_orders_desc_by_ordersTypeId(ordersTypeId)
+    key = list(result[0].keys())[0]
+    return result[0][key]
+
+
 
 
 async def broadcast_message(context, message):
@@ -101,34 +116,40 @@ def insert_or_update_cisia_account(context):
 
 def buy_euro_control(update, context):
     insert_or_update_user(update, context)
-    insert_buy_currency(tel_userId=context._user_id, currencyId=1, value=context.user_data["amount"], finish=0)
+    ordersId = insert_and_get_ordersId("buy_currency")
+    insert_buy_currency(tel_userId=context._user_id, ordersId=ordersId, currencyId=1, value=context.user_data["amount"], finish=0)
 
 
 def other_order_control(update, context):
     insert_or_update_user(update, context)
-    insert_other_order(context._user_id, description=context.user_data["description"],
+    ordersId = insert_and_get_ordersId("order_other")
+    insert_other_order(context._user_id, ordersId=ordersId, description=context.user_data["description"],
                        price=context.user_data["amount"], finish=0)
     
 def app_fee_control(update, context):
     insert_or_update_user(update, context)
-    insert_app_fee(context._user_id, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
+    ordersId = insert_and_get_ordersId("app_fee")
+    insert_app_fee(context._user_id, ordersId=ordersId, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
                    euroAmount=context.user_data["app_fee_euro_amount"], euroPrice=context.user_data["app_fee_euro_price"],
                    rialChange=context.user_data["app_fee_rial"], trans_filepath=context.user_data["app_fee_trans_filepath"], finish=0)
     
 def tuition_fee_control(update, context):
     insert_or_update_user(update, context)
-    insert_tuition_fee(context._user_id, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
+    ordersId = insert_and_get_ordersId("tuition_fee")
+    insert_tuition_fee(context._user_id, ordersId=ordersId, university=context.user_data["app_fee_university"], degree=context.user_data["app_fee_degree"],
                         finish=0)
     
 def reg_uni_control(update, context):
     insert_or_update_user(update, context)
-    insert_reg_uni(context._user_id, regTypeId=context.user_data["university_type"], regCourseLevelId=context.user_data["course_level"],
+    ordersId = insert_and_get_ordersId("reg_uni")
+    insert_reg_uni(context._user_id, ordersId=ordersId, regTypeId=context.user_data["university_type"], regCourseLevelId=context.user_data["course_level"],
                    regCourseLangId=context.user_data["course_lang"], uniName=context.user_data["university_name"],
                    courseName=context.user_data["course_name"], finish=0)
     
 def tolc_order_exam_control(update, context):
     insert_or_update_user(update, context)
-    insert_tolc_order_exam(context._user_id, tolcExamDetailId=context.user_data["tolcExamDetailId"],
+    ordersId = insert_and_get_ordersId("tolc_order_exam")
+    insert_tolc_order_exam(context._user_id, ordersId=ordersId, tolcExamDetailId=context.user_data["tolcExamDetailId"],
                            euroAmount=context.user_data["tolc_euro_amount"],
                            euroPrice=context.user_data["tolc_euro_price"],
                            rial_change=context.user_data["tolc_rial"],
@@ -137,20 +158,23 @@ def tolc_order_exam_control(update, context):
     
 def torvergata_control(update, context):
     insert_or_update_user(update, context)
-    insert_torvergata(context._user_id, euroAmount=context.user_data["torvergata_euro_amount"],
+    ordersId = insert_and_get_ordersId("torvergata")
+    insert_torvergata(context._user_id, ordersId=ordersId, euroAmount=context.user_data["torvergata_euro_amount"],
                       euroPrice=context.user_data["torvergata_euro_price"],
                       rial=context.user_data["torvergata_rial"],
                       trans_filepath=context.user_data["torvergata_trans_filepath"], finish=0)
 
 def cimea_control(update, context):
     insert_or_update_user(update, context)
-    insert_cimea(context._user_id, cimeaPriceId=context.user_data["cimea_price_id"],
+    ordersId = insert_and_get_ordersId("cimea")
+    insert_cimea(context._user_id, ordersId=ordersId, cimeaPriceId=context.user_data["cimea_price_id"],
                  cimeaEuroPrice=context.user_data["cimea_euro_price"], cimeaRial=context.user_data["cimea_rial"],
                  trans_filepath=context.user_data["cimea_trans_filepath"], finish=0)
 
 def reserve_hotel_control(update, context):
     insert_or_update_user(update, context)
-    insert_reserve_hotel(context._user_id, finish=0)
+    ordersId = insert_and_get_ordersId("reserve_hotel")
+    insert_reserve_hotel(context._user_id, ordersId=ordersId, finish=0)
 
 def get_admin_control(update, context):
     result = get_admin_by_tel_userId(context._user_id)
@@ -163,6 +187,7 @@ def get_order_controller_buyEuro(finish):
     formatted_list = [
     (
         f"🆔شناسه خرید:\n{item['buyCurrencyId']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"📌نوع پرداختی:\nخرید یورو\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -185,6 +210,7 @@ def get_order_controller_otherOrder(finish):
 
     formatted_list = [(
         f"🆔شناسه سفارش:\n{item['orderOtherId']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"📌نوع پرداختی:\nothers\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -206,6 +232,7 @@ def get_order_controller_reserveHotel(finish):
 
     formatted_list = [(
         f"🆔شناسه رزرو:\n{item['reserveHotelID']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"🏨نوع پرداختی:\nرزرو هتل\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -224,6 +251,7 @@ def get_order_controller_reguni(finish):
 
     formatted_list = [(
         f"🆔شناسه ثبت‌نام:\n{item['regUniId']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"📌نوع پرداختی:\nثبت‌نام دانشگاه\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -248,6 +276,7 @@ def get_order_controller_tuitionFee(finish):
     formatted_list = [
         (
             f"🆔شناسه پرداخت شهریه:\n{item['tuitionFeeId']}\n\n"
+            f"📎شناسه: #سفارش_{item['ordersId']}\n"
             f"📌نوع پرداختی:\nپرداخت شهریه\n"
             f"{'-'*50}\n\n"
             f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -271,6 +300,7 @@ def get_order_controller_cimea(finish):
     formatted_list = [
     (
         f"🆔شناسه CIMEA:\n{item['cimeaId']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"📌نوع پرداختی:\nCIMEA\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -298,6 +328,7 @@ def get_order_controller_appFee(finish):
     formatted_list = [
     (
         f"🆔شناسه پرداخت اپلیکیشن فی:\n{item['appFeeId']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"📌نوع پرداختی:\nپرداخت اپلیکیشن فی\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -325,6 +356,7 @@ def get_order_controller_tovergata(finish):
     formatted_list = [
         (
             f"🆔شناسه پرداخت Tor Vergata:\n{item['torvergataId']}\n\n"
+            f"📎شناسه: #سفارش_{item['ordersId']}\n"
             f"📌نوع پرداختی:\nپرداخت Tor Vergata\n"
             f"{'-'*50}\n\n"
             f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -346,10 +378,11 @@ def get_order_controller_tovergata(finish):
 
 def get_order_controller_tolcExam(finish):
     data = get_tolcExam_admin(finish)
-    
+
     formatted_list = [
     (
         f"🆔شناسه سفارش آزمون TOLC:\n{item['tolcOrderExamId']}\n\n"
+        f"📎شناسه: #سفارش_{item['ordersId']}\n"
         f"📌نوع پرداختی:\nسفارش آزمون TOLC\n"
         f"{'-'*50}\n\n"
         f"⏰زمان:\n{item['time'].strftime('%Y-%m-%d %H:%M:%S')}\n\n"
