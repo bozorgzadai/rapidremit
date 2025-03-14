@@ -129,6 +129,9 @@ def reg_uni_control(update, context):
 def tolc_order_exam_control(update, context):
     insert_or_update_user(update, context)
     insert_tolc_order_exam(context._user_id, tolcExamDetailId=context.user_data["tolcExamDetailId"],
+                           euroAmount=context.user_data["tolc_euro_amount"],
+                           euroPrice=context.user_data["tolc_euro_price"],
+                           rial_change=context.user_data["tolc_rial"],
                            examDate=context.user_data["told_exam_date"], trans_filePath=context.user_data["tolc_exam_trans_filepath"],
                            finish=0)
     
@@ -343,7 +346,7 @@ def get_order_controller_tovergata(finish):
 
 def get_order_controller_tolcExam(finish):
     data = get_tolcExam_admin(finish)
-
+    
     formatted_list = [
     (
         f"🆔شناسه سفارش آزمون TOLC:\n{item['tolcOrderExamId']}\n\n"
@@ -357,6 +360,9 @@ def get_order_controller_tolcExam(finish):
         f"📚نوع آزمون:\n{item['tolcExamTypeName']}\n\n"
         f"🔑نام کاربری چیزآ:\n{item['username']}\n\n"
         f"🔒رمز عبور چیزآ:\n{decrypting_password(item['password'])}\n\n"
+        f"💶مقدار یورو:\n{item['euroAmount']}\n\n"
+        f"💱قیمت یورو:\n{item['euroPrice']}\n\n"
+        f"💰مبلغ نهایی (تومان):\n{item['rial_change']}\n\n"
         f"result18",
         item['trans_filePath'],  # Transaction file in the second field of tuple
         "tolc_exam",

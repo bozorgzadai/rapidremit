@@ -282,8 +282,11 @@ def get_toevergata_admin(finish):
 def get_tolcExam_admin(finish):
     db = Database.get_database()
     select_query = """
-    SELECT 
+    SELECT  
         toe.tolcOrderExamId,
+        toe.euroAmount,
+        toe.euroPrice,
+        toe.rial_change,
         u.userFirstName, 
         u.userLastName, 
         u.userName, 
@@ -360,11 +363,13 @@ def insert_reg_uni(tel_userId, regTypeId='', regCourseLevelId='', regCourseLangI
     db.execute(insert_query, insert_params)
 
 
-def insert_tolc_order_exam(tel_userId, tolcExamDetailId='', examDate='', trans_filePath='', finish=''):
+def insert_tolc_order_exam(tel_userId, tolcExamDetailId='', euroAmount='', euroPrice='', rial_change='',
+                           examDate='', trans_filePath='', finish=''):
     db = Database.get_database()
-    insert_query = """INSERT INTO tolc_order_exam(tel_userId, tolcExamDetailId, examDate, trans_filePath, finish)
-                                    VALUES (%s, %s, %s, %s, %s)"""
-    insert_params = (tel_userId, tolcExamDetailId, examDate, trans_filePath, finish)
+    insert_query = """INSERT INTO tolc_order_exam(tel_userId, tolcExamDetailId, euroAmount, euroPrice, rial_change,
+                                                    examDate, trans_filePath, finish)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    insert_params = (tel_userId, tolcExamDetailId, euroAmount, euroPrice, rial_change, examDate, trans_filePath, finish)
     db.execute(insert_query, insert_params)
 
 

@@ -185,15 +185,20 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return await goto_get_id(update)
 
     context.user_data["contact"] = update.message.text
-    return await goto_confirm_payment(update)
+    return await goto_confirm_payment(update, context)
 
 
 
-async def goto_confirm_payment(update, message=None):
-    torvergata_euro_amount= 35
+async def goto_confirm_payment(update, context, message=None):
+    euro_amount = 35
     euro_price, unit = await get_euro_to_toman_exchange_rate_api()
-    exam_fee = int(torvergata_euro_amount  * euro_price + 480000)
-    default_message = f"""داوطلب گرامی هزینه شرکت در آزمون  {exam_fee} تومان می‌باشد.\nاگر صحت اطلاعات خود و موجودی ظرفیت در روز درخواستی اطلاع دارید با استفاده از گزینه پرداخت درخواست خود را تکمیل کنید."""
+    amount_rial = int(euro_amount  * euro_price + 480000)
+
+    context.user_data["tolc_euro_amount"] = euro_amount
+    context.user_data["tolc_euro_price"] = euro_price
+    context.user_data["tolc_rial"] = amount_rial
+
+    default_message = f"""داوطلب گرامی هزینه شرکت در آزمون  {amount_rial} تومان می‌باشد.\nاگر صحت اطلاعات خود و موجودی ظرفیت در روز درخواستی اطلاع دارید با استفاده از گزینه پرداخت درخواست خود را تکمیل کنید."""
     
     if message:
         show_message = message
@@ -216,7 +221,7 @@ async def confirm_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return await goto_main_menu(update, context)
     else:
         message = "لطفا یکی از گزینه‌های موجود را انتخاب کنید."
-        return await goto_confirm_payment(update, message)
+        return await goto_confirm_payment(update, context, message)
 
 
 
