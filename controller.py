@@ -249,7 +249,7 @@ def get_order_controller_tuitionFee(finish):
             f"📞تلفن:\n{item['phoneNumber']}\n\n"
             f"🏛دانشگاه:\n{item['university']}\n\n"
             f"🎓مدرک تحصیلی:\n{item['degree']}\n\n"
-            "app_and_tuition_fee",
+            "result14",
             None
         )
         for item in data
