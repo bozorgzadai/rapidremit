@@ -185,10 +185,7 @@ async def italy_app_fee_receipt(update: Update, context: ContextTypes.DEFAULT_TY
         filename = await save_transaction_image(update, context, save_directory)
         context.user_data["app_fee_trans_filepath"] = filename
 
-        if context.user_data["is_app_fee"]:
-            app_fee_control(update, context)
-        else:
-            tuition_fee_control(update, context)
+        app_fee_control(update, context)
 
         message = """کاربر گرامی، درخواست شما با موفقیت ثبت شد. ادمین‌های پرداختی ما در سریع‌ترین فرصت با شما ارتباط خواهند گرفت."""
         return await goto_main_menu(update, context, message)
