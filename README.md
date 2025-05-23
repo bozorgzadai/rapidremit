@@ -33,3 +33,9 @@ Before running the bot, ensure you have installed:
 ```bash
 pip install python-telegram-bot --upgrade
 pip install mysql-connector-python
+```
+
+and set telegram TOKEN in **config.py**
+
+```python
+TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
